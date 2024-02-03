@@ -25,7 +25,7 @@ public class SecConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeHttpRequests((authorize) -> authorize.requestMatchers("/register/**").permitAll()
-                        .requestMatchers("/home").permitAll())
+                .requestMatchers("/home").authenticated())
                 .formLogin(
                         form -> form
                                 .loginPage("/login")
