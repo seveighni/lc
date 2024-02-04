@@ -15,8 +15,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 
 import com.lc.application.dto.RegisterUserDto;
+import com.lc.application.model.Customer;
 import com.lc.application.model.Role;
 import com.lc.application.model.User;
+import com.lc.application.repository.CustomerRepository;
 import com.lc.application.repository.RoleRepository;
 import com.lc.application.repository.UserRepository;
 import jakarta.validation.Valid;
@@ -27,6 +29,8 @@ public class AuthController {
     private UserRepository userRepository;
     @Autowired
     private RoleRepository roleRepository;
+    @Autowired
+    private CustomerRepository customerRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -93,17 +97,21 @@ public class AuthController {
 
     private User registerUser(RegisterUserDto userDto) {
         User user = new User();
-        user.setFirstName(userDto.getFirstName());
-        user.setLastName(userDto.getLastName());
-        user.setEmail(userDto.getEmail());
-        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        var role = roleRepository.findByName("ROLE_CUSTOMER");
-        if (role == null) {
-            role = new Role();
-            role.setName("ROLE_CUSTOMER");
-            roleRepository.save(role);
-        }
-        user.setRoles(Set.of(role));
-        return userRepository.save(user);
+		user.setFirstName(userDto.getFirstName());
+		user.setLastName(userDto.getLastName());
+		user.setEmail(userDto.getEmail());
+		user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+		if (!userDto.isRequiringEmployeeRights()) {
+			var role = roleRepository.findByName("CUSTOMER");
+			if (role == null) {
+				role = new Role();
+				role.setName("CUSTOMER");
+				roleRepository.save(role);
+			}
+			user.setRoles(Set.of(role));
+			//Customer customer = new Customer();
+			//customerRepository.save(customer);
+		}
+		return userRepository.save(user);
     }
 }
