@@ -17,7 +17,27 @@
     <div th:replace="~{base :: nav}"></div>
 
     <div class="container">
-        <div class="container row justify-content-center p-5">
+        <div class="container justify-content-center p-5">
+
+            <form class="d-flex w-100 mt-3" th:action="@{/offices}" id="searchForm">
+                <div class="col-md-6 mt-2">
+                    <div class="search d-flex">
+                        <input id="address" type="search" name="address" th:value="${address}" class="form-control"
+                            placeholder="Filter by address">
+                        <button type="submit" class="btn btn-secondary">Search</button>
+                    </div>
+                </div>
+                <div class="col-md-3 input-group mt-2">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text" for="pageSize">Items per page:</label>
+                    </div>
+                    <select form="searchForm" name="size" th:value="${pageSize}" class=" size-select" id="pageSize">
+                        <option th:each="s : ${ {5, 10, 20} }" th:value="${s}" th:text="${s}"
+                            th:selected="${s == pageSize}"></option>
+                    </select>
+                </div>
+            </form>
+
             <div th:if="${offices.size() > 0}">
                 <table class="table table-hover table-responsive-xl">
                     <thead class="thead-light">
@@ -76,6 +96,7 @@
             </nav>
         </div>
     </div>
+
 </body>
 
 </html>

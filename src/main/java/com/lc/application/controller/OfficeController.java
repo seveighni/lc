@@ -21,18 +21,18 @@ public class OfficeController {
 
     @GetMapping("/offices")
     public String getOffices(
-            Model model, @RequestParam(required = false) String query,
-            @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "3") int size) {
+            Model model, @RequestParam(required = false) String address,
+            @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "5") int size) {
         try {
             List<Office> offices = new ArrayList<Office>();
             var paging = PageRequest.of(page - 1, size);
 
             Page<Office> pageOffices;
-            if (query == null) {
+            if (address == null) {
                 pageOffices = officeRepository.findAll(paging);
             } else {
-                pageOffices = officeRepository.findByAddressContainingIgnoreCase(query, paging);
-                model.addAttribute("query", query);
+                pageOffices = officeRepository.findByAddressContainingIgnoreCase(address, paging);
+                model.addAttribute("address", address);
             }
 
             offices = pageOffices.getContent();
