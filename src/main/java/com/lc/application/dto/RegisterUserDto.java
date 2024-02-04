@@ -23,4 +23,5 @@ public class RegisterUserDto {
     private String password;
     @NotEmpty(message = "Password should not be empty")
     private String password1;
+    private boolean requiringEmployeeRights;
 }
