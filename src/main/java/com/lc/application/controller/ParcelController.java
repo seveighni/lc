@@ -20,8 +20,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.lc.application.dto.ParcelDto;
 import com.lc.application.model.Customer;
+import com.lc.application.model.Employee;
 import com.lc.application.model.Parcel;
 import com.lc.application.repository.CustomerRepository;
+import com.lc.application.repository.EmployeeRepository;
 import com.lc.application.repository.ParcelRepository;
 
 @Controller
@@ -33,6 +35,8 @@ public class ParcelController {
 
 	@Autowired
 	private CustomerRepository customerRepository;
+	@Autowired
+	private EmployeeRepository employeeRepository;
 
 	@GetMapping
 	public String getParcels(Model model, @RequestParam(defaultValue = "1") int page,
@@ -53,34 +57,53 @@ public class ParcelController {
 			var paging = PageRequest.of(page - 1, size, Sort.by("id"));
 			Page<Parcel> pageOfParcels = null;
 
+			String userEmail = principal.getUsername();
 			if (userRoleType.equals("CUSTOMER")) {
-				String customerEmail = principal.getUsername();
-				Optional<Customer> customer = customerRepository.getCustomerIdByUserEmail(customerEmail);
+				Optional<Customer> customer = customerRepository.getCustomerIdByUserEmail(userEmail);
 				if (customer.isPresent()) {
 					Long userId = customer.get().getId();
 					if (sentByMe) {
 						pageOfParcels = parcelRepository.findAllBySenderId(paging, userId);
-						parcels = pageOfParcels.getContent().stream().filter(p -> p.getSender().getId() == userId)
-								.map(p -> new ParcelDto(p)).collect(Collectors.toList());
+						parcels = pageOfParcels.getContent().stream().map(p -> new ParcelDto(p))
+								.collect(Collectors.toList());
+
+						// TODO remove hardcoded entity
+						parcels.add(new ParcelDto(1));
+					} else {
+						pageOfParcels = parcelRepository.findAllByReceiverId(paging, userId);
+						parcels = pageOfParcels.getContent().stream().map(p -> new ParcelDto(p))
+								.collect(Collectors.toList());
 
 						// TODO remove hardcoded entity
 						parcels.add(new ParcelDto(2));
-					} else {
-						pageOfParcels = parcelRepository.findAllByReceiverId(paging, userId);
-						parcels = pageOfParcels.getContent().stream().filter(p -> p.getReceiver().getId() == userId)
-								.map(p -> new ParcelDto(p)).collect(Collectors.toList());
+					}
+				}
+			} else if (userRoleType.equals("EMPLOYEE")) {
+				if (sentByMe) {
+					Optional<Employee> employee = employeeRepository.getEmployeeIdByUserEmail(userEmail);
+					if (employee.isPresent()) {
+						Long userId = employee.get().getId();
+						pageOfParcels = parcelRepository.findAllByRegisteredById(paging, userId);
+						parcels = pageOfParcels.getContent().stream().map(p -> new ParcelDto(p))
+								.collect(Collectors.toList());
 
 						// TODO remove hardcoded entity
 						parcels.add(new ParcelDto(3));
 					}
+				} else {
+					pageOfParcels = parcelRepository.findAll(paging);
+					parcels = pageOfParcels.getContent().stream().map(p -> new ParcelDto(p))
+							.collect(Collectors.toList());
 
+					// TODO remove hardcoded entity
+					parcels.add(new ParcelDto(4));
 				}
-			} else if (userRoleType.equals("ADMIN") || userRoleType.equals("EMPLOYEE")) {
+			} else if (userRoleType.equals("ADMIN")) {
 				pageOfParcels = parcelRepository.findAll(paging);
 				parcels = pageOfParcels.getContent().stream().map(p -> new ParcelDto(p)).collect(Collectors.toList());
 
 				// TODO remove hardcoded entity
-				parcels.add(new ParcelDto(1));
+				parcels.add(new ParcelDto(5));
 			}
 			model.addAttribute("parcels", parcels);
 			model.addAttribute("currentPage", pageOfParcels.getNumber() + 1);
@@ -103,6 +126,13 @@ public class ParcelController {
 	public String getParcelsSentToMe(Model model, @RequestParam(defaultValue = "1") int page,
 			@RequestParam(defaultValue = "5") int size) {
 		loadModelWithWantedPagedParcels(model, false, page, size);
+		return "/parcels/parcels-list";
+	}
+
+	@GetMapping("/registeredBy")
+	public String getParcelsRegisteredByMe(Model model, @RequestParam(defaultValue = "1") int page,
+			@RequestParam(defaultValue = "5") int size) {
+		loadModelWithWantedPagedParcels(model, true, page, size);
 		return "/parcels/parcels-list";
 	}
 
