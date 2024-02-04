@@ -1,7 +1,7 @@
 package com.lc.application.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -37,9 +37,26 @@ public class User {
     private String firstName;
     private String lastName;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE
+    })
     @JoinTable(name = "users_roles", joinColumns = {
-            @JoinColumn(name = "USER_ID", referencedColumnName = "ID") }, inverseJoinColumns = {
-                    @JoinColumn(name = "ROLE_ID", referencedColumnName = "ID") })
-    private List<Role> roles = new ArrayList<>();
+            @JoinColumn(name = "user_id") }, inverseJoinColumns = {
+                    @JoinColumn(name = "role_id") })
+    private Set<Role> roles = new HashSet<>();
+
+    public void addRole(Role role) {
+        this.roles.add(role);
+        role.getUsers().add(this);
+    }
+
+    public void removeRole(String roleName) {
+        var role = this.roles.stream().filter(c -> c.getName().equals(roleName)).findFirst()
+                .orElse(null);
+        if (role != null) {
+            this.roles.remove(role);
+            role.getUsers().remove(this);
+        }
+    }
 }

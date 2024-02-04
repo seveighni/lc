@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -91,7 +91,7 @@ public class AuthController {
             role.setName("ROLE_CUSTOMER");
             roleRepository.save(role);
         }
-        user.setRoles(List.of(role));
+        user.setRoles(Set.of(role));
         return userRepository.save(user);
     }
 }
