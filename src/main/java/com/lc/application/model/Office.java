@@ -23,4 +23,6 @@ public class Office {
     private Long id;
 
     private String address;
+
+    private Boolean isActive;
 }

@@ -71,6 +71,7 @@ public class OfficeController {
 
             Office office = new Office();
             office.setAddress(dto.getAddress());
+            office.setIsActive(true);
             officeRepository.save(office);
         } catch (Exception e) {
             model.addAttribute("message", e.getMessage());

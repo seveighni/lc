@@ -44,6 +44,7 @@
                         <tr>
                             <th scope="col">Id</th>
                             <th scope="col">Address</th>
+                            <th scope="col">Active</th>
                             <th scope="col">Actions</th>
                         </tr>
                     </thead>
@@ -52,12 +53,12 @@
                             <th scope="row">[[${office.id}]]</th>
                             <td>[[${office.address}]]</td>
                             <td>
+                                <span th:if="${office.isActive == true}"><i class="fa fa-check"></i></span>
+                                <span th:unless="${office.isActive == true}"></span>
+                            </td>
+                            <td>
                                 <a th:href="@{'/offices/' + ${office.id}}" title="Edit this office"
                                     class="fa-regular fa-pen-to-square icon-dark"></a>
-
-                                <a th:href="@{'/offices/delete/' + ${office.id}}" th:officeAddress="${office.address}"
-                                    id="btnDelete" title="Delete this office"
-                                    class="fa-regular fa-trash-can icon-dark btn-delete"></a>
                             </td>
                         </tr>
                     </tbody>
@@ -98,7 +99,8 @@
             <div class="mt-3">
 
                 <div class="card-body">
-                    <form class="me-auto ms-auto" method="post" role="form" th:object="${createOfficeDTO}" th:action="@{/offices}">
+                    <form class="me-auto ms-auto" method="post" role="form" th:object="${createOfficeDTO}"
+                        th:action="@{/offices}">
                         <h5>Create a new office</h5>
                         <input id="new-address" type="text" name="address" th:field="*{address}" class="form-control"
                             placeholder="Enter address">
