@@ -29,7 +29,7 @@
                             <a class="nav-link active" aria-current="page" th:href="@{/home}">Home</a>
                         </li>
                         <li sec:authorize="isAuthenticated()" class="nav-item">
-                            <a class="nav-link" aria-current="page" th:href="@{/home}">Test</a>
+                            <a class="nav-link" aria-current="page" th:href="@{/offices}">Offices</a>
                         </li>
                         <li sec:authorize="isAnonymous()" class="nav-item">
                             <a class="nav-link" th:href="@{/login}">Login</a>
@@ -54,6 +54,12 @@
             </div>
         </nav>
     </div>
+
+    <a th:fragment="paging(base, pageNum, label, tooltip)" class="page-link"
+        th:href="@{${base} + '?' + ${query!=null && query!=''? 'query=' + query + '&' : ''} + 'page=' + ${pageNum} + '&size=' + ${pageSize}}"
+        th:title="${tooltip}" rel="tooltip">
+        [[${label}]]
+    </a>
 
 </body>
 
