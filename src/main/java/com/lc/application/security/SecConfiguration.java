@@ -29,6 +29,7 @@ public class SecConfiguration {
                 .requestMatchers("/users/**").hasAuthority("ADMIN")
                 .requestMatchers("/employees/**").hasAuthority("ADMIN")
                 .requestMatchers("/rates/**").hasAnyAuthority("ADMIN","EMPLOYEE")
+                .requestMatchers("/customers/**").hasAnyAuthority("ADMIN","EMPLOYEE")
                 .requestMatchers("/home").authenticated())
                 .formLogin(
                         form -> form
