@@ -10,10 +10,13 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.lc.application.dto.CreateOfficeDto;
+import com.lc.application.dto.ResultDto;
+import com.lc.application.dto.UpdateOfficeDto;
 import com.lc.application.model.Office;
 import com.lc.application.repository.OfficeRepository;
 
@@ -77,5 +80,47 @@ public class OfficeController {
             model.addAttribute("message", e.getMessage());
         }
         return "redirect:/offices";
+    }
+
+    @GetMapping("/offices/{id}")
+    public String getOffice(Model model, @PathVariable Long id) {
+        try {
+            Office office = officeRepository.findById(id).get();
+            UpdateOfficeDto updateOfficeDto = new UpdateOfficeDto();
+            updateOfficeDto.setId(office.getId());
+            updateOfficeDto.setAddress(office.getAddress());
+            updateOfficeDto.setIsActive(office.getIsActive());
+            model.addAttribute("updateOfficeDTO", updateOfficeDto);
+        } catch (Exception e) {
+            model.addAttribute("message", e.getMessage());
+        }
+        return "office/office";
+    }
+
+    @PostMapping("/offices/{id}")
+    public String putOffice(@Valid @ModelAttribute("updateOfficeDTO") UpdateOfficeDto dto,
+            BindingResult result,
+            Model model, @PathVariable Long id) {
+        try {
+            if (result.hasErrors()) {
+                model.addAttribute("updateOfficeDTO", dto);
+                return "/office/office";
+            }
+
+            var opt = officeRepository.findById(id);
+            if (opt.isEmpty()) {
+                model.addAttribute("message", "Office not found");
+                return "redirect:/offices";
+            }
+            var office = opt.get();
+            office.setAddress(dto.getAddress());
+            office.setIsActive(dto.getIsActive());
+            officeRepository.save(office);
+        } catch (Exception e) {
+            model.addAttribute("message", e.getMessage());
+        }
+
+        model.addAttribute("result", new ResultDto("Office updated successfully!", true));
+        return "/office/office";
     }
 }
