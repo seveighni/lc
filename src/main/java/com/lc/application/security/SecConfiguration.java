@@ -25,7 +25,7 @@ public class SecConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeHttpRequests((authorize) -> authorize.requestMatchers("/register/**").permitAll()
-                .requestMatchers("/offices").authenticated() // TODO fix this
+                .requestMatchers("/offices/**").authenticated() // TODO fix this
                 .requestMatchers("/users/**").hasAuthority("ADMIN")
                 .requestMatchers("/home").authenticated())
                 .formLogin(

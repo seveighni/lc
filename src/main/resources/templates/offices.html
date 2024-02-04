@@ -94,6 +94,25 @@
                     </li>
                 </ul>
             </nav>
+
+            <div class="mt-3">
+
+                <div class="card-body">
+                    <form class="me-auto ms-auto" method="post" role="form" th:object="${createOfficeDTO}" th:action="@{/offices}">
+                        <h5>Create a new office</h5>
+                        <input id="new-address" type="text" name="address" th:field="*{address}" class="form-control"
+                            placeholder="Enter address">
+                        <div class="text-lg-end">
+                            <div class="form-group mt-2">
+                                <button type="submit" class="btn btn-primary">
+                                    Create
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
         </div>
     </div>
 
