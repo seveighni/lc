@@ -37,9 +37,22 @@
                         <li sec:authorize="isAnonymous()" class="nav-item">
                             <a class="nav-link" th:href="@{/register}">Register</a>
                         </li>
-                        <li sec:authorize="hasAnyAuthority('ADMIN')" class="nav-item">
-                            <a class="nav-link" th:href="@{/users/employees}">Users</a>
+
+                        <li>
+                            <div sec:authorize="hasAnyAuthority('ADMIN')" class="dropdown">
+                                <span class="navbar-text">
+                                    <a class="nav-link" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown"
+                                        aria-expanded="false">Users</a>
+                                    <ul class="dropdown-menu dropdown-menu-lg-end"
+                                        aria-labelledby="dropdownMenuButton1">
+                                        <li><a class="dropdown-item" th:href="@{/users}">Users</a></li>
+                                        <li><a class="dropdown-item" th:href="@{/users/employees}">Waiting Approval</a>
+                                        </li>
+                                    </ul>
+                                </span>
+                            </div>
                         </li>
+
                         <li sec:authorize="hasAnyAuthority('ADMIN')" class="nav-item">
                             <a class="nav-link" th:href="@{/employees}">Employees</a>
                         </li>

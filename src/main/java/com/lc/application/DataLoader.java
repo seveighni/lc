@@ -33,7 +33,7 @@ public class DataLoader implements CommandLineRunner {
 	@Autowired
 	private RatesRepository ratesRepository;
 	@Autowired
-    private PasswordEncoder passwordEncoder;
+	private PasswordEncoder passwordEncoder;
 
 	@Override
 	public void run(String... args) throws Exception {
@@ -42,47 +42,54 @@ public class DataLoader implements CommandLineRunner {
 
 	private void loadUserData() {
 		if (userRepository.count() == 0) {
-			User user = new User();
-			user.setEmail("admin@admin.com");
-			user.setFirstName("Admin");
-			user.setLastName("Admin");
-			user.setPassword(passwordEncoder.encode("admin"));
-			var role = roleRepository.findByName("ADMIN");
-			if (role == null) {
-				role = new Role();
-				role.setName("ADMIN");
+			User admin = new User();
+			admin.setEmail("admin@admin.com");
+			admin.setFirstName("Admin");
+			admin.setLastName("Admin");
+			admin.setPassword(passwordEncoder.encode("admin"));
+			var adminRole = roleRepository.findByName("ADMIN");
+			if (adminRole == null) {
+				adminRole = new Role();
+				adminRole.setName("ADMIN");
 			}
-			user.setRoles(Set.of(role));
-			userRepository.save(user);
-			
-			User user1 = new User();
-			user1.setEmail("employee@test.com");
-			user1.setFirstName("employee");
-			user1.setLastName("employee");
-			user1.setPassword(passwordEncoder.encode("employee"));
-			var role1 = roleRepository.findByName("EMPLOYEE");
-			if (role1 == null) {
-				role1 = new Role();
-				role1.setName("EMPLOYEE");
+			admin.setRoles(Set.of(adminRole));
+			userRepository.save(admin);
+
+			User employeeUser = new User();
+			employeeUser.setEmail("employee@test.com");
+			employeeUser.setFirstName("employee");
+			employeeUser.setLastName("employee");
+			employeeUser.setPassword(passwordEncoder.encode("employee"));
+			var employeeRole = roleRepository.findByName("EMPLOYEE");
+			if (employeeRole == null) {
+				employeeRole = new Role();
+				employeeRole.setName("EMPLOYEE");
 			}
-			user1.setRoles(Set.of(role1));
-			userRepository.save(user1);
+			employeeUser.setRoles(Set.of(employeeRole));
+			userRepository.save(employeeUser);
 			Employee employee = new Employee();
-			employee.setUser(user1);
+			employee.setUser(employeeUser);
 			employee.setActive(true);
-			employeeRepository.save(employee);	
-			
+			employeeRepository.save(employee);
+
+			User userAwaitingApproval = new User();
+			userAwaitingApproval.setFirstName("employeeToBe");
+			userAwaitingApproval.setLastName("employeeToBe");
+			userAwaitingApproval.setEmail("employeeToBe@test.com");
+			userAwaitingApproval.setPassword(passwordEncoder.encode("employeeToBe"));
+			userRepository.save(userAwaitingApproval);
+
 			Office office = new Office();
 			office.setAddress("Sofia, Blvd Bulgaria, 1");
 			office.setIsActive(true);
 			officeRepository.save(office);
-			
+
 			Rates rateForOffice = new Rates();
 			rateForOffice.setName("ShipToOffice");
 			rateForOffice.setPerKg(new BigDecimal(0.5));
 			rateForOffice.setFlatRate(new BigDecimal(4.69));
 			ratesRepository.save(rateForOffice);
-			
+
 			Rates rateForAddress = new Rates();
 			rateForAddress.setName("ShipToAddress");
 			rateForAddress.setPerKg(new BigDecimal(0.6));
