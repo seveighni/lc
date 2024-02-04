@@ -1,5 +1,6 @@
 package com.lc.application;
 
+import java.math.BigDecimal;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,10 +10,12 @@ import org.springframework.stereotype.Component;
 
 import com.lc.application.model.Employee;
 import com.lc.application.model.Office;
+import com.lc.application.model.Rates;
 import com.lc.application.model.Role;
 import com.lc.application.model.User;
 import com.lc.application.repository.EmployeeRepository;
 import com.lc.application.repository.OfficeRepository;
+import com.lc.application.repository.RatesRepository;
 import com.lc.application.repository.RoleRepository;
 import com.lc.application.repository.UserRepository;
 
@@ -27,6 +30,8 @@ public class DataLoader implements CommandLineRunner {
 	EmployeeRepository employeeRepository;
 	@Autowired
 	OfficeRepository officeRepository;
+	@Autowired
+	private RatesRepository ratesRepository;
 	@Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -71,6 +76,18 @@ public class DataLoader implements CommandLineRunner {
 			office.setAddress("Sofia, Blvd Bulgaria, 1");
 			office.setIsActive(true);
 			officeRepository.save(office);
+			
+			Rates rateForOffice = new Rates();
+			rateForOffice.setName("ShipToOffice");
+			rateForOffice.setPerKg(new BigDecimal(0.5));
+			rateForOffice.setFlatRate(new BigDecimal(4.69));
+			ratesRepository.save(rateForOffice);
+			
+			Rates rateForAddress = new Rates();
+			rateForAddress.setName("ShipToAddress");
+			rateForAddress.setPerKg(new BigDecimal(0.6));
+			rateForAddress.setFlatRate(new BigDecimal(6.69));
+			ratesRepository.save(rateForAddress);
 		}
 	}
 }

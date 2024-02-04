@@ -43,6 +43,9 @@
                         <li sec:authorize="hasAnyAuthority('ADMIN')" class="nav-item">
                             <a class="nav-link" th:href="@{/employees}">Employees</a>
                         </li>
+                        <li sec:authorize="hasAnyAuthority('ADMIN','EMPLOYEE')" class="nav-item">
+                            <a class="nav-link" th:href="@{/rates}">Rates</a>
+                        </li>
                     </ul>
                     <div sec:authorize="isAuthenticated()" class="dropdown">
                         <span class="navbar-text">

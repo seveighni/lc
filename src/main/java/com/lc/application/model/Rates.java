@@ -1,5 +1,7 @@
 package com.lc.application.model;
 
+import java.math.BigDecimal;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,9 +24,9 @@ public class Rates {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	private double perKg;
+	private String name;
 	
-	private double shipToOffice;
+	private BigDecimal perKg;
 	
-	private double shipToAddress;
+	private BigDecimal flatRate;
 }
