@@ -62,6 +62,27 @@
                         <li sec:authorize="hasAnyAuthority('ADMIN','EMPLOYEE')" class="nav-item">
                             <a class="nav-link" th:href="@{/customers}">Customers</a>
                         </li>
+
+                        <li sec:authorize="hasAnyAuthority('CUSTOMER')">
+                            <div class="dropdown">
+                                <span class="navbar-text">
+                                    <a class="nav-link" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown"
+                                        aria-expanded="false">Parcels</a>
+                                    <ul class="dropdown-menu dropdown-menu-lg-end"
+                                        aria-labelledby="dropdownMenuButton1">
+                                        <li><a class="dropdown-item" th:href="@{/parcels/sentBy}">Sent by me</a></li>
+                                        <li><a class="dropdown-item" th:href="@{/parcels/sentTo}">Sent to me</a>
+                                        </li>
+                                    </ul>
+                                </span>
+                            </div>
+                        </li>
+
+                        <li sec:authorize="hasAnyAuthority('ADMIN','EMPLOYEE')" class="nav-item">
+                            <a class="nav-link" th:href="@{/parcels}">Parcels</a>
+                        </li>
+
+
                     </ul>
                     <div sec:authorize="isAuthenticated()" class="dropdown">
                         <span class="navbar-text">
