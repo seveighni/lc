@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 
@@ -17,14 +19,10 @@ import com.lc.application.model.Role;
 import com.lc.application.model.User;
 import com.lc.application.repository.RoleRepository;
 import com.lc.application.repository.UserRepository;
-import com.lc.application.security.UserService;
-
 import jakarta.validation.Valid;
 
 @Controller
 public class AuthController {
-    private UserService userService;
-
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -39,6 +37,11 @@ public class AuthController {
 
     @GetMapping("/register")
     public String registrationPage(Model model) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser")) {
+            return "redirect:/home";
+        }
+
         RegisterUserDto user = new RegisterUserDto();
         model.addAttribute("user", user);
         return "register";
@@ -48,6 +51,11 @@ public class AuthController {
     public String registration(@Valid @ModelAttribute("user") RegisterUserDto userDto,
             BindingResult result,
             Model model) {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser")) {
+            return "redirect:/home";
+        }
 
         if (!userDto.getPassword().equals(userDto.getPassword1())) {
             result.rejectValue("password", null, "Passwords do not match");
@@ -70,12 +78,16 @@ public class AuthController {
             model.addAttribute("error", "An error occurred while registering.");
             return "/register";
         }
-        
+
         return "redirect:/login?successRegistration";
     }
 
     @GetMapping("/login")
     public String loginPage() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser")) {
+            return "redirect:/home";
+        }
         return "login";
     }
 
