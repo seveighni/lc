@@ -17,15 +17,23 @@
     <div th:replace="~{base :: nav}"></div>
 
     <div class="container">
+        <div class="container justify-content-center p-5">
 
-        &nbsp;
-        <div th:unless="${employees.size() > 0}">
-            <span>No employees found!</span>
-        </div>
+            <form class="d-flex w-100 mt-3" th:action="@{/employees}" id="searchForm">
+                <!-- <div class="col-md-6 mt-2"> -->
+                <div class="search d-flex w-100">
+                    <input id="email" type="search" name="email" th:value="${email}" class="form-control me-2"
+                        placeholder="Filter by email">
+                    <label class="input-group-text me-2" for="pageSize">Items per page:</label>
+                    <select form="searchForm" name="size" th:value="${pageSize}" class="size-select me-2" id="pageSize">
+                        <option th:each="s : ${ {5, 10, 20} }" th:value="${s}" th:text="${s}"
+                            th:selected="${s == pageSize}"></option>
+                    </select>
+                    <button type="submit" class="btn btn-outline-primary">Search</button>
+                </div>
+            </form>
 
-        <div class="container row justify-content-center p-5">
             <div th:if="${employees.size() > 0}">
-                <h4>Employees: </h4>
                 <table class="table table-hover table-responsive-xl">
                     <thead class="thead-light">
                         <tr>
@@ -52,12 +60,45 @@
                                 <span th:unless="${employee.isActive == true}"></span>
                             </td>
                             <td>
-                                <a class="btn btn-primary" th:href="@{/employees/{id}(id=${employee.id})}">Edit</a>
+                                <a th:href="@{/employees/{id}(id=${employee.id})}" title="Edit this Employee"
+                                    class="fa-regular fa-pen-to-square icon-dark"></a>
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
+
+            <div th:unless="${employees.size() > 0}">
+                <span>No employees found!</span>
+            </div>
+
+            <nav aria-label="Pagination" th:if="${totalPages > 0}">
+                <ul class="pagination justify-content-end">
+                    <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                        <a th:replace="~{base :: paging('/employees', 1, '<<', 'First Page')}"></a>
+                    </li>
+                    <li class="page-item font-weight-bold" th:classappend="${currentPage == 1} ? 'disabled'">
+                        <a
+                            th:replace="~{base :: paging('/employees', ${currentPage - 1}, 'Prev', 'Previous Page')}"></a>
+                    </li>
+                    <li class="page-item disabled" th:if="${currentPage - 2 > 1}">
+                        <a class="page-link" href="#">...</a>
+                    </li>
+                    <li class="page-item" th:classappend="${page == currentPage} ? 'active'"
+                        th:each="page : ${#numbers.sequence(currentPage > 2 ? currentPage - 2 : 1, currentPage + 2 < totalPages ? currentPage + 2 : totalPages)}">
+                        <a th:replace="~{base :: paging('/employees', ${page}, ${page}, 'Page ' + ${page})}"></a>
+                    </li>
+                    <li class="page-item disabled" th:if="${currentPage + 2 < totalPages}">
+                        <a class="page-link" href="#">...</a>
+                    </li>
+                    <li class="page-item font-weight-bold" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                        <a th:replace="~{base :: paging('/employees', ${currentPage + 1},'Next', 'Next Page')}"></a>
+                    </li>
+                    <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                        <a th:replace="~{base :: paging('/employees', ${totalPages}, '>>', 'Last Page')}"></a>
+                    </li>
+                </ul>
+            </nav>
         </div>
     </div>
 </body>

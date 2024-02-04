@@ -1,9 +1,13 @@
 package com.lc.application.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -12,6 +16,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.lc.application.dto.EmployeeDto;
 import com.lc.application.dto.ResultDto;
@@ -32,10 +37,28 @@ public class EmployeeController {
 	private OfficeRepository officeRepository;
 
 	@GetMapping
-	public String getEmployees(Model model) {
-		List<EmployeeDto> employees = employeeRepository.findAll().stream().map(e -> new EmployeeDto(e))
-				.collect(Collectors.toList());
-		model.addAttribute("employees", employees);
+	public String getEmployees(Model model, @RequestParam(required = false) String email,
+			@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "5") int size) {
+		try {
+			List<EmployeeDto> employees = new ArrayList<EmployeeDto>();
+			var paging = PageRequest.of(page - 1, size, Sort.by("id"));
+
+			Page<Employee> pageEmployees;
+			if (email == null) {
+				pageEmployees = employeeRepository.findAll(paging);
+			} else {
+				pageEmployees = employeeRepository.findByUserEmailContainingIgnoreCase(email, paging);
+				model.addAttribute("email", email);
+			}
+			employees = pageEmployees.getContent().stream().map(e -> new EmployeeDto(e)).collect(Collectors.toList());
+			model.addAttribute("employees", employees);
+			model.addAttribute("currentPage", pageEmployees.getNumber() + 1);
+			model.addAttribute("totalItems", pageEmployees.getTotalElements());
+			model.addAttribute("totalPages", pageEmployees.getTotalPages());
+			model.addAttribute("pageSize", size);
+		} catch (Exception e) {
+			model.addAttribute("message", e.getMessage());
+		}
 		return "/employees/employees-list";
 	}
 
@@ -56,7 +79,13 @@ public class EmployeeController {
 			return "/employees/employees-edit";
 		}
 
-		Employee employee = employeeRepository.findById(id).get();
+		var opt = employeeRepository.findById(id);
+		if (opt.isEmpty()) {
+			model.addAttribute("message", "Employee not found");
+			return "redirect:/employees/employees-list";
+		}
+
+		var employee = opt.get();
 		employee.setActive(employeeDto.getIsActive());
 		employee.setType(employeeDto.getType());
 
