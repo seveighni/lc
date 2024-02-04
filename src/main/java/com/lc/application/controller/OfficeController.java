@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.lc.application.dto.CreateOfficeDto;
@@ -23,12 +24,13 @@ import com.lc.application.repository.OfficeRepository;
 import jakarta.validation.Valid;
 
 @Controller
+@RequestMapping(value = "/offices")
 public class OfficeController {
 
     @Autowired
     private OfficeRepository officeRepository;
 
-    @GetMapping("/offices")
+    @GetMapping
     public String getOffices(
             Model model, @RequestParam(required = false) String address,
             @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "5") int size) {
@@ -58,10 +60,10 @@ public class OfficeController {
         CreateOfficeDto createOfficeDto = new CreateOfficeDto();
         model.addAttribute("createOfficeDTO", createOfficeDto);
 
-        return "offices";
+        return "/offices/offices-list";
     }
 
-    @PostMapping("/offices")
+    @PostMapping
     public String postOffices(@Valid @ModelAttribute("createOfficeDTO") CreateOfficeDto dto,
             BindingResult result,
             Model model) {
@@ -69,7 +71,7 @@ public class OfficeController {
 
             if (result.hasErrors()) {
                 model.addAttribute("createOfficeDTO", dto);
-                return "/offices";
+                return "/offices/offices-list";
             }
 
             Office office = new Office();
@@ -79,10 +81,10 @@ public class OfficeController {
         } catch (Exception e) {
             model.addAttribute("message", e.getMessage());
         }
-        return "redirect:/offices";
+        return "redirect:/offices/offices-list";
     }
 
-    @GetMapping("/offices/{id}")
+    @GetMapping("/{id}")
     public String getOffice(Model model, @PathVariable Long id) {
         try {
             Office office = officeRepository.findById(id).get();
@@ -94,23 +96,23 @@ public class OfficeController {
         } catch (Exception e) {
             model.addAttribute("message", e.getMessage());
         }
-        return "office/office";
+        return "/offices/offices-edit";
     }
 
-    @PostMapping("/offices/{id}")
+    @PostMapping("/{id}")
     public String putOffice(@Valid @ModelAttribute("updateOfficeDTO") UpdateOfficeDto dto,
             BindingResult result,
             Model model, @PathVariable Long id) {
         try {
             if (result.hasErrors()) {
                 model.addAttribute("updateOfficeDTO", dto);
-                return "/office/office";
+                return "/offices/offices-edit";
             }
 
             var opt = officeRepository.findById(id);
             if (opt.isEmpty()) {
                 model.addAttribute("message", "Office not found");
-                return "redirect:/offices";
+                return "redirect:/offices/offices-list";
             }
             var office = opt.get();
             office.setAddress(dto.getAddress());
@@ -121,6 +123,6 @@ public class OfficeController {
         }
 
         model.addAttribute("result", new ResultDto("Office updated successfully!", true));
-        return "/office/office";
+        return "/offices/offices-edit";
     }
 }

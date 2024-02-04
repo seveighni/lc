@@ -7,8 +7,12 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import com.lc.application.model.Employee;
+import com.lc.application.model.Office;
 import com.lc.application.model.Role;
 import com.lc.application.model.User;
+import com.lc.application.repository.EmployeeRepository;
+import com.lc.application.repository.OfficeRepository;
 import com.lc.application.repository.RoleRepository;
 import com.lc.application.repository.UserRepository;
 
@@ -19,6 +23,10 @@ public class DataLoader implements CommandLineRunner {
 	UserRepository userRepository;
 	@Autowired
 	RoleRepository roleRepository;
+	@Autowired
+	EmployeeRepository employeeRepository;
+	@Autowired
+	OfficeRepository officeRepository;
 	@Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -41,7 +49,28 @@ public class DataLoader implements CommandLineRunner {
 			}
 			user.setRoles(Set.of(role));
 			userRepository.save(user);
+			
+			User user1 = new User();
+			user1.setEmail("employee@test.com");
+			user1.setFirstName("employee");
+			user1.setLastName("employee");
+			user1.setPassword(passwordEncoder.encode("employee"));
+			var role1 = roleRepository.findByName("EMPLOYEE");
+			if (role1 == null) {
+				role1 = new Role();
+				role1.setName("EMPLOYEE");
+			}
+			user1.setRoles(Set.of(role1));
+			userRepository.save(user1);
+			Employee employee = new Employee();
+			employee.setUser(user1);
+			employee.setActive(true);
+			employeeRepository.save(employee);	
+			
+			Office office = new Office();
+			office.setAddress("Sofia, Blvd Bulgaria, 1");
+			office.setIsActive(true);
+			officeRepository.save(office);
 		}
-		System.out.println(userRepository.count());
 	}
 }

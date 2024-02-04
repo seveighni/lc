@@ -8,4 +8,6 @@ import com.lc.application.model.Office;
 
 public interface OfficeRepository extends JpaRepository<Office, Long> {
     Page<Office> findByAddressContainingIgnoreCase(String keyword, Pageable pageable);
+    
+    Office findByAddress(String keyword);
 }

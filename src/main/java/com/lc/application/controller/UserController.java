@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.lc.application.model.Employee;
 import com.lc.application.model.Role;
 import com.lc.application.model.User;
+import com.lc.application.repository.EmployeeRepository;
 import com.lc.application.repository.RoleRepository;
 import com.lc.application.repository.UserRepository;
 
@@ -22,6 +24,8 @@ public class UserController {
 	private UserRepository userRepository;
 	@Autowired
 	private RoleRepository roleRepository;
+	@Autowired
+	private EmployeeRepository employeeRepository;
 
 	@GetMapping("/employees")
 	public String getUsers(Model model) {
@@ -39,12 +43,19 @@ public class UserController {
 			role.setName("EMPLOYEE");
 			user.addRole(role);
 			roleRepository.save(role);
-			// TODO employee
+			createEmployee(user);
 			return "redirect:/users/employees";
 		}
 		user.addRole(role);
 		userRepository.save(user);
-		// TODO employee
+		createEmployee(user);
 		return "redirect:/users/employees";
+	}
+
+	private void createEmployee(User user) {
+		Employee employee = new Employee();
+		employee.setUser(user);
+		employee.setActive(true);
+		employeeRepository.save(employee);
 	}
 }

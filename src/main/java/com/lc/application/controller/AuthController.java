@@ -109,8 +109,9 @@ public class AuthController {
 				roleRepository.save(role);
 			}
 			user.setRoles(Set.of(role));
-			//Customer customer = new Customer();
-			//customerRepository.save(customer);
+			Customer customer = new Customer();
+			customer.setUser(user);
+			customerRepository.save(customer);
 		}
 		return userRepository.save(user);
     }

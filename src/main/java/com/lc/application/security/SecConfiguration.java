@@ -27,6 +27,7 @@ public class SecConfiguration {
                 .authorizeHttpRequests((authorize) -> authorize.requestMatchers("/register/**").permitAll()
                 .requestMatchers("/offices/**").authenticated() // TODO fix this
                 .requestMatchers("/users/**").hasAuthority("ADMIN")
+                .requestMatchers("/employees/**").hasAuthority("ADMIN")
                 .requestMatchers("/home").authenticated())
                 .formLogin(
                         form -> form
