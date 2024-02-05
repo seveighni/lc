@@ -1,18 +1,19 @@
 package com.lc.application;
 
 import java.math.BigDecimal;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import com.lc.application.model.Customer;
 import com.lc.application.model.Employee;
 import com.lc.application.model.Office;
 import com.lc.application.model.Rates;
 import com.lc.application.model.Role;
 import com.lc.application.model.User;
+import com.lc.application.repository.CustomerRepository;
 import com.lc.application.repository.EmployeeRepository;
 import com.lc.application.repository.OfficeRepository;
 import com.lc.application.repository.RatesRepository;
@@ -29,6 +30,8 @@ public class DataLoader implements CommandLineRunner {
 	@Autowired
 	EmployeeRepository employeeRepository;
 	@Autowired
+	CustomerRepository customerRepository;
+	@Autowired
 	OfficeRepository officeRepository;
 	@Autowired
 	private RatesRepository ratesRepository;
@@ -42,59 +45,69 @@ public class DataLoader implements CommandLineRunner {
 
 	private void loadUserData() {
 		if (userRepository.count() == 0) {
-			User admin = new User();
-			admin.setEmail("admin@admin.com");
-			admin.setFirstName("Admin");
-			admin.setLastName("Admin");
-			admin.setPassword(passwordEncoder.encode("admin"));
-			var adminRole = roleRepository.findByName("ADMIN");
-			if (adminRole == null) {
-				adminRole = new Role();
-				adminRole.setName("ADMIN");
-			}
-			admin.setRoles(Set.of(adminRole));
-			userRepository.save(admin);
 
-			User employeeUser = new User();
-			employeeUser.setEmail("employee@test.com");
-			employeeUser.setFirstName("employee");
-			employeeUser.setLastName("employee");
-			employeeUser.setPassword(passwordEncoder.encode("employee"));
-			var employeeRole = roleRepository.findByName("EMPLOYEE");
-			if (employeeRole == null) {
-				employeeRole = new Role();
-				employeeRole.setName("EMPLOYEE");
-			}
-			employeeUser.setRoles(Set.of(employeeRole));
-			userRepository.save(employeeUser);
+			createUser("Stefan", "Stefanov", "admin@test.com", "password", "ADMIN", true);
+
+			User employeeUser = createUser("Georgi", "Georgiev", "employee@test.com", "password", "EMPLOYEE", true);
 			Employee employee = new Employee();
 			employee.setUser(employeeUser);
 			employee.setActive(true);
-			employeeRepository.save(employee);
+			employeeRepository.saveAndFlush(employee);
 
-			User userAwaitingApproval = new User();
-			userAwaitingApproval.setFirstName("employeeToBe");
-			userAwaitingApproval.setLastName("employeeToBe");
-			userAwaitingApproval.setEmail("employeeToBe@test.com");
-			userAwaitingApproval.setPassword(passwordEncoder.encode("employeeToBe"));
-			userRepository.save(userAwaitingApproval);
+			createUser("Galya", "Galyova", "employeeToBe@test.com", "password", "", false);
+
+			User customerUser = createUser("Tosho", "Toshov", "tosho@test.com", "password", "CUSTOMER", true);
+			Customer customer = new Customer();
+			customer.setUser(customerUser);
+			customerRepository.saveAndFlush(customer);
+
+			// createSecondCustomer();
 
 			Office office = new Office();
 			office.setAddress("Sofia, Blvd Bulgaria, 1");
 			office.setIsActive(true);
-			officeRepository.save(office);
+			officeRepository.saveAndFlush(office);
 
 			Rates rateForOffice = new Rates();
 			rateForOffice.setName("ShipToOffice");
 			rateForOffice.setPerKg(new BigDecimal(0.5));
 			rateForOffice.setFlatRate(new BigDecimal(4.69));
-			ratesRepository.save(rateForOffice);
+			ratesRepository.saveAndFlush(rateForOffice);
 
 			Rates rateForAddress = new Rates();
 			rateForAddress.setName("ShipToAddress");
 			rateForAddress.setPerKg(new BigDecimal(0.6));
 			rateForAddress.setFlatRate(new BigDecimal(6.69));
-			ratesRepository.save(rateForAddress);
+			ratesRepository.saveAndFlush(rateForAddress);
 		}
+	}
+
+	private void createSecondCustomer() {
+		User customerUserTwo = createUser("Ivan", "Ivanov", "ivan@test.com", "password", "CUSTOMER", true);
+		Customer customerTwo = new Customer();
+		customerTwo.setUser(customerUserTwo);
+		customerRepository.saveAndFlush(customerTwo);
+	}
+
+	private User createUser(String firstName, String lastName, String email, String password, String roleName,
+			boolean shoouldAddRole) {
+		User user = new User();
+		user.setFirstName(firstName);
+		user.setLastName(lastName);
+		user.setEmail(email);
+		user.setPassword(passwordEncoder.encode(password));
+		if (shoouldAddRole) {
+			var role = roleRepository.findByName(roleName);
+			if (role == null) {
+				role = new Role();
+				role.setName(roleName);
+				user.addRole(role);
+				// roleRepository.save(role);
+				roleRepository.saveAndFlush(role);
+				return user;
+			}
+			user.addRole(role);
+		}
+		return userRepository.saveAndFlush(user);
 	}
 }
