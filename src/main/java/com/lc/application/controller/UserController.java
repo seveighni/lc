@@ -36,8 +36,10 @@ public class UserController {
 
 	@GetMapping
 	public String getUsers(Model model, @RequestParam(required = false) String email,
-			@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "5") int size) {
-		loadModelWithWantedPagedUsers(model, email, false, page, size);
+			@RequestParam(required = false) Boolean requestAccess, @RequestParam(defaultValue = "1") int page,
+			@RequestParam(defaultValue = "5") int size) {
+		requestAccess = requestAccess != null ? requestAccess : false;
+		loadModelWithWantedPagedUsers(model, email, requestAccess, page, size);
 		return "/users/users-list";
 	}
 
@@ -55,15 +57,18 @@ public class UserController {
 			var paging = PageRequest.of(page - 1, size, Sort.by("id"));
 
 			Page<User> pageUsers;
-			if (fetchUsersRequestingApproval) {
-				pageUsers = userRepository.findAll(paging);
-				users = pageUsers.getContent().stream().filter(u -> u.getRoles().isEmpty()).map(u -> new UserDto(u))
-						.collect(Collectors.toList());
+			if (fetchUsersRequestingApproval && email == null) {
+				pageUsers = userRepository.findByRoles(null, paging);
+				users = fetchUserDtos(pageUsers);
 			} else if (email == null) {
 				pageUsers = userRepository.findAll(paging);
 				users = fetchUserDtos(pageUsers);
 			} else {
-				pageUsers = userRepository.findByEmailContainingIgnoreCase(email, paging);
+				if (fetchUsersRequestingApproval) {
+					pageUsers = userRepository.findByRolesAndEmailContainingIgnoreCase(null, email, paging);
+				} else {
+					pageUsers = userRepository.findByEmailContainingIgnoreCase(email, paging);
+				}
 				model.addAttribute("email", email);
 				users = fetchUserDtos(pageUsers);
 			}
