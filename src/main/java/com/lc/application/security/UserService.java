@@ -14,8 +14,6 @@ import com.lc.application.model.Role;
 import com.lc.application.model.User;
 import com.lc.application.repository.UserRepository;
 
-import jakarta.transaction.Transactional;
-
 @Service
 public class UserService implements UserDetailsService {
 
@@ -25,7 +23,6 @@ public class UserService implements UserDetailsService {
         this.userRepository = userRepository;
     }
 
-    @Transactional
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email);

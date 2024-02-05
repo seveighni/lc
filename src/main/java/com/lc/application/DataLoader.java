@@ -46,68 +46,69 @@ public class DataLoader implements CommandLineRunner {
 	private void loadUserData() {
 		if (userRepository.count() == 0) {
 
-			createUser("Stefan", "Stefanov", "admin@test.com", "password", "ADMIN", true);
+			var admin = createUser("Stefan", "Stefanov", "admin@test.com", "password");
+			addRole(admin.getId(), "ADMIN");
 
-			User employeeUser = createUser("Georgi", "Georgiev", "employee@test.com", "password", "EMPLOYEE", true);
+			var employeeUser = createUser("Georgi", "Georgiev", "employee@test.com", "password");
+			addRole(employeeUser.getId(), "EMPLOYEE");
 			Employee employee = new Employee();
 			employee.setUser(employeeUser);
 			employee.setActive(true);
-			employeeRepository.saveAndFlush(employee);
+			employeeRepository.save(employee);
 
-			createUser("Galya", "Galyova", "employeeToBe@test.com", "password", "", false);
+			var usr3 = createUser("Galya", "Galyova", "employeeToBe@test.com", "password");
 
-			User customerUser = createUser("Tosho", "Toshov", "tosho@test.com", "password", "CUSTOMER", true);
+			var customerUser = createUser("Tosho", "Toshov", "tosho@test.com", "password");
+			addRole(customerUser.getId(), "CUSTOMER");
 			Customer customer = new Customer();
 			customer.setUser(customerUser);
-			customerRepository.saveAndFlush(customer);
+			customerRepository.save(customer);
 
-			// createSecondCustomer();
+			var customerUserTwo = createUser("Ivan", "Ivanov", "ivan@test.com", "password");
+			addRole(customerUserTwo.getId(), "CUSTOMER");
+			Customer customerTwo = new Customer();
+			customerTwo.setUser(customerUserTwo);
+			customerRepository.save(customerTwo);
 
 			Office office = new Office();
 			office.setAddress("Sofia, Blvd Bulgaria, 1");
 			office.setIsActive(true);
-			officeRepository.saveAndFlush(office);
+			officeRepository.save(office);
 
 			Rates rateForOffice = new Rates();
 			rateForOffice.setName("ShipToOffice");
 			rateForOffice.setPerKg(new BigDecimal(0.5));
 			rateForOffice.setFlatRate(new BigDecimal(4.69));
-			ratesRepository.saveAndFlush(rateForOffice);
+			ratesRepository.save(rateForOffice);
 
 			Rates rateForAddress = new Rates();
 			rateForAddress.setName("ShipToAddress");
 			rateForAddress.setPerKg(new BigDecimal(0.6));
 			rateForAddress.setFlatRate(new BigDecimal(6.69));
-			ratesRepository.saveAndFlush(rateForAddress);
+			ratesRepository.save(rateForAddress);
 		}
 	}
 
-	private void createSecondCustomer() {
-		User customerUserTwo = createUser("Ivan", "Ivanov", "ivan@test.com", "password", "CUSTOMER", true);
-		Customer customerTwo = new Customer();
-		customerTwo.setUser(customerUserTwo);
-		customerRepository.saveAndFlush(customerTwo);
-	}
-
-	private User createUser(String firstName, String lastName, String email, String password, String roleName,
-			boolean shoouldAddRole) {
+	private User createUser(String firstName, String lastName, String email, String password) {
 		User user = new User();
 		user.setFirstName(firstName);
 		user.setLastName(lastName);
 		user.setEmail(email);
 		user.setPassword(passwordEncoder.encode(password));
-		if (shoouldAddRole) {
-			var role = roleRepository.findByName(roleName);
-			if (role == null) {
-				role = new Role();
-				role.setName(roleName);
-				user.addRole(role);
-				// roleRepository.save(role);
-				roleRepository.saveAndFlush(role);
-				return user;
-			}
+		return userRepository.save(user);
+	}
+
+	private void addRole(Long userId, String roleName) {
+		var user = userRepository.findById(userId).get();
+		var role = roleRepository.findByName(roleName);
+		if (role == null) {
+			role = new Role();
+			role.setName(roleName);
 			user.addRole(role);
+			roleRepository.save(role);
+		} else {
+			user.addRole(role);
+			userRepository.save(user);
 		}
-		return userRepository.saveAndFlush(user);
 	}
 }
