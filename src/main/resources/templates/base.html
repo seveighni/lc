@@ -71,7 +71,9 @@
                                     <ul class="dropdown-menu dropdown-menu-lg-end"
                                         aria-labelledby="dropdownMenuButton1">
                                         <li sec:authorize="hasAnyAuthority('EMPLOYEE')"><a class="dropdown-item"
-                                                th:href="@{/parcels}">Parcels</a></li>
+                                                th:href="@{/parcels}">All</a></li>
+                                        <li sec:authorize="hasAnyAuthority('EMPLOYEE')"><a class="dropdown-item"
+                                                th:href="@{/parcels/create}">Create new</a></li>
                                         <li sec:authorize="hasAnyAuthority('EMPLOYEE')"><a class="dropdown-item"
                                                 th:href="@{/parcels/registeredBy}">Registered by me</a></li>
 

@@ -1,10 +1,7 @@
 package com.lc.application.model;
 
 import java.math.BigDecimal;
-import java.util.Date;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
-
+import java.time.LocalDate;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -25,9 +22,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "parcels")
 public class Parcel {
-
-	// TODO
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -40,22 +34,20 @@ public class Parcel {
 	@JoinColumn(name = "receiver_id", nullable = false)
 	private Customer receiver;
 
+	@ManyToOne(fetch = FetchType.LAZY, optional = true)
+	@JoinColumn(name = "office_id", nullable = false)
+	private Office office;
+
 	private String address;
 
-	private double weight;
+	private BigDecimal weight;
 
-	@JsonFormat(pattern = "yyyy-MM-dd")
-	private Date orderDate;
+	private LocalDate  orderDate;
 
-	@JsonFormat(pattern = "yyyy-MM-dd")
-	private Date deliveryDate;
+	private LocalDate  deliveryDate;
 
 	private Boolean isPaid;
 
-	// @Transient ?
-	// private Rates rate;
-
-	// @Formula
 	private BigDecimal price;
 
 	// enum ?
