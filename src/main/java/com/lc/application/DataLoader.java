@@ -3,7 +3,8 @@ package com.lc.application;
 import java.math.BigDecimal;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -20,8 +21,10 @@ import com.lc.application.repository.RatesRepository;
 import com.lc.application.repository.RoleRepository;
 import com.lc.application.repository.UserRepository;
 
+import jakarta.transaction.Transactional;
+
 @Component
-public class DataLoader implements CommandLineRunner {
+public class DataLoader  {
 
 	@Autowired
 	UserRepository userRepository;
@@ -38,12 +41,9 @@ public class DataLoader implements CommandLineRunner {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
-	@Override
-	public void run(String... args) throws Exception {
-		loadUserData();
-	}
-
-	private void loadUserData() {
+	@EventListener
+	@Transactional
+	public void loadUserData(ContextRefreshedEvent event) {
 		if (userRepository.count() == 0) {
 
 			var admin = createUser("Stefan", "Stefanov", "admin@test.com", "password");
