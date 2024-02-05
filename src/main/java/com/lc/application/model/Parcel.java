@@ -1,6 +1,9 @@
 package com.lc.application.model;
 
 import java.math.BigDecimal;
+import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -40,6 +43,14 @@ public class Parcel {
 	private String address;
 
 	private double weight;
+
+	@JsonFormat(pattern = "yyyy-MM-dd")
+	private Date orderDate;
+
+	@JsonFormat(pattern = "yyyy-MM-dd")
+	private Date deliveryDate;
+
+	private Boolean isPaid;
 
 	// @Transient ?
 	// private Rates rate;
