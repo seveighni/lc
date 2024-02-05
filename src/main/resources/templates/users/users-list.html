@@ -28,7 +28,10 @@
             <option th:each="s : ${ {5, 10, 20} }" th:value="${s}" th:text="${s}" th:selected="${s == pageSize}">
             </option>
           </select>
-          <button type="submit" class="btn btn-outline-primary">Search</button>
+          <button type="submit" class="btn btn-outline-primary" th:unless="${usersRequestingEmployeeAccess}"
+            th:name="requestAccess" th:value="false">Search</button>
+          <button type="submit" class="btn btn-outline-primary" th:if="${usersRequestingEmployeeAccess}"
+            th:name="requestAccess" th:value="true">Search</button>
         </div>
       </form>
 
