@@ -60,7 +60,7 @@ public class OfficeController {
 		CreateOfficeDto createOfficeDto = new CreateOfficeDto();
 		model.addAttribute("createOfficeDTO", createOfficeDto);
 
-		return "/offices/offices-list";
+		return "/offices/list";
 	}
 
 	@PostMapping
@@ -69,7 +69,7 @@ public class OfficeController {
 		try {
 			if (result.hasErrors()) {
 				model.addAttribute("createOfficeDTO", dto);
-				return "/offices/offices-list";
+				return "/offices/list";
 			}
 			Office office = new Office();
 			office.setAddress(dto.getAddress());
@@ -78,7 +78,7 @@ public class OfficeController {
 		} catch (Exception e) {
 			model.addAttribute("message", e.getMessage());
 		}
-		return "redirect:/offices/offices-list";
+		return "redirect:/offices";
 	}
 
 	@GetMapping("/{id}")
@@ -93,7 +93,7 @@ public class OfficeController {
 		} catch (Exception e) {
 			model.addAttribute("message", e.getMessage());
 		}
-		return "/offices/offices-edit";
+		return "/offices/edit";
 	}
 
 	@PostMapping("/{id}")
@@ -102,13 +102,13 @@ public class OfficeController {
 		try {
 			if (result.hasErrors()) {
 				model.addAttribute("updateOfficeDTO", dto);
-				return "/offices/offices-edit";
+				return "/offices/edit";
 			}
 
 			var opt = officeRepository.findById(id);
 			if (opt.isEmpty()) {
 				model.addAttribute("message", "Office not found");
-				return "redirect:/offices/offices-list";
+				return "redirect:/offices/list";
 			}
 			var office = opt.get();
 			office.setAddress(dto.getAddress());
@@ -119,6 +119,6 @@ public class OfficeController {
 		}
 
 		model.addAttribute("result", new ResultDto("Office updated successfully!", true));
-		return "/offices/offices-edit";
+		return "/offices/edit";
 	}
 }
