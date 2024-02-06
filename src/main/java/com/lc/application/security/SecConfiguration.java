@@ -33,7 +33,8 @@ public class SecConfiguration {
                 .requestMatchers("/employees/**").hasAuthority("ADMIN")
                 .requestMatchers("/rates/**").hasAnyAuthority("ADMIN","EMPLOYEE")
                 .requestMatchers("/customers/**").hasAnyAuthority("ADMIN","EMPLOYEE")
-                .requestMatchers(HttpMethod.GET, "/parcels").hasAuthority("CUSTOMER")
+                .requestMatchers(HttpMethod.GET, "/parcels").hasAnyAuthority("ADMIN","EMPLOYEE", "CUSTOMER")
+                .requestMatchers("/parcels").hasAnyAuthority("ADMIN","EMPLOYEE")
                 .requestMatchers("/parcels/**").hasAnyAuthority("ADMIN","EMPLOYEE")
                 .requestMatchers("/home").authenticated())
                 .formLogin(
