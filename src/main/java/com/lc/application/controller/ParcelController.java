@@ -304,6 +304,10 @@ public class ParcelController {
 		parcel.setOrderDate(LocalDate.now());
 		parcel.setIsPaid(dto.getIsPaid());
 
+		var loggedInUser = getLoggedInUser();
+		var employee = employeeRepository.getEmployeeIdByUserEmail(loggedInUser.getEmail());
+		parcel.setRegisteredBy(employee.get());
+
 		parcelRepository.save(parcel);
 
 		model.addAttribute("result", new ResultDto("Parcel created successfully!", true));
