@@ -27,7 +27,8 @@ public class SecConfiguration {
         http.csrf().disable()
                 .authorizeHttpRequests((authorize) -> authorize.requestMatchers("/register/**").permitAll()
                 .requestMatchers("/profile").authenticated()
-                .requestMatchers(HttpMethod.GET, "/offices").hasAuthority("CUSTOMER")
+                .requestMatchers(HttpMethod.GET, "/offices").hasAnyAuthority("ADMIN","EMPLOYEE", "CUSTOMER")
+                .requestMatchers("/offices").hasAnyAuthority("ADMIN","EMPLOYEE")
                 .requestMatchers("/offices/**").hasAnyAuthority("ADMIN","EMPLOYEE") // TODO fix this
                 .requestMatchers("/users/**").hasAuthority("ADMIN")
                 .requestMatchers("/employees/**").hasAuthority("ADMIN")
