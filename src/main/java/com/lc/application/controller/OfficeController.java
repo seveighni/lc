@@ -37,7 +37,7 @@ public class OfficeController {
 			@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "5") int size) {
 		try {
 			List<Office> offices = new ArrayList<Office>();
-			var paging = PageRequest.of(page - 1, size, Sort.by("isActive"));
+			var paging = PageRequest.of(page - 1, size, Sort.by("isActive").descending().and(Sort.by("id").ascending()));
 
 			Page<Office> pageOffices;
 			if (address == null) {
