@@ -1,8 +1,12 @@
 package com.lc.application.controller;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -19,7 +23,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,17 +30,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.lc.application.dto.CreateParcelDto;
 import com.lc.application.dto.ParcelDto;
 import com.lc.application.dto.ResultDto;
-import com.lc.application.dto.UpdateOfficeDto;
 import com.lc.application.model.Customer;
 import com.lc.application.model.Employee;
-import com.lc.application.model.Office;
 import com.lc.application.model.Parcel;
-import com.lc.application.model.Rates;
 import com.lc.application.repository.CustomerRepository;
 import com.lc.application.repository.EmployeeRepository;
 import com.lc.application.repository.OfficeRepository;
 import com.lc.application.repository.ParcelRepository;
 import com.lc.application.repository.RatesRepository;
+import com.lc.application.repository.UserRepository;
 
 import jakarta.validation.Valid;
 
@@ -52,6 +53,8 @@ public class ParcelController {
 	private CustomerRepository customerRepository;
 	@Autowired
 	private EmployeeRepository employeeRepository;
+	@Autowired
+	private UserRepository userRepository;
 
 	@Autowired
 	private RatesRepository ratesRepository;
@@ -60,11 +63,71 @@ public class ParcelController {
 	private OfficeRepository officeRepository;
 
 	@GetMapping
-	public String getParcels(Model model, @RequestParam(defaultValue = "1") int page,
+	public String getParcels(Model model, @RequestParam(required = false) String email,
+			@RequestParam(required = false) String searchBy, @RequestParam(required = false) String startDate,
+			@RequestParam(required = false) String endDate, @RequestParam(defaultValue = "1") int page,
 			@RequestParam(defaultValue = "5") int size) {
-		// TODO
+
+		try {
+			List<ParcelDto> parcels = new ArrayList<ParcelDto>();
+			var paging = PageRequest.of(page - 1, size, Sort.by("id"));
+			Page<Parcel> pageParcels = null;
+
+			com.lc.application.model.User loggedInUser = getLoggedInUser();
+			if (getLoggedInUserRole().contains("CUSTOMER")) {
+				pageParcels = parcelRepository.findAllBySenderId(paging, loggedInUser.getId());
+
+			} else if (getLoggedInUserRole().contains("EMPLOYEE")) {
+
+				//
+
+				pageParcels = parcelRepository.findAllByRegisteredById(paging, loggedInUser.getId());
+			} else if (getLoggedInUserRole().contains("ADMIN")) {
+
+				//
+
+				pageParcels = parcelRepository.findAll(paging);
+			}
+
+			// check dates
+			/*
+			model.addAttribute("startDate", startDate);
+			model.addAttribute("endDate", endDate);
+			if (startDate.isEmpty() || endDate.isEmpty()) {
+				model.addAttribute("result", new ResultDto("Dates entered are not valid.", false));
+				return "/parcels/parcels-list";
+			}
+			Date start = retirieveDate(startDate);
+			Date end = retirieveDate(endDate);
+			if (start.after(end)) {
+				model.addAttribute("result", new ResultDto("Start date should be before end date.", false));
+				return "/parcels/parcels-list";
+			}*/
+		} catch (Exception e) {
+			model.addAttribute("message", e.getMessage());
+		}
+
+		// TODO - remove below method after this is completed
 		loadModelWithWantedPagedParcels(model, false, page, size);
 		return "/parcels/parcels-list";
+	}
+
+	private com.lc.application.model.User getLoggedInUser() {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		User principal = (User) auth.getPrincipal();
+		String email = principal.getUsername();
+		return userRepository.findByEmail(email);
+	}
+
+	private String getLoggedInUserRole() {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		return auth.getAuthorities().stream().findFirst().get().toString();
+	}
+
+	public static Date retirieveDate(String dateStr) throws ParseException {
+		DateFormat parser = new SimpleDateFormat("yyyy-MM-dd");
+		Date date = (Date) parser.parse(dateStr);
+		return date;
 	}
 
 	// TODO
