@@ -41,9 +41,6 @@ public class CustomerController {
 			}
 			customers = pageOfCustomers.getContent().stream().map(c -> new CustomerDto(c)).collect(Collectors.toList());
 
-			// TODO remove hardcoded
-			customers.add(new CustomerDto(1, "hardcoded-customer@test.com", "firstName", "lastName"));
-
 			model.addAttribute("customers", customers);
 			model.addAttribute("currentPage", pageOfCustomers.getNumber() + 1);
 			model.addAttribute("totalItems", pageOfCustomers.getTotalElements());
