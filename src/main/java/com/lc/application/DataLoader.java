@@ -57,18 +57,18 @@ public class DataLoader {
 			createUser("Galya", "Dimitrova", "employeeToBe1@test.com", "password");
 			createUser("Ivan", "Gabrielov", "employeeToBe2@test.com", "password");
 
-			createCustomer("Tosho", "Grigorov", "cutomer1@test.com", "password");
-			createCustomer("Ivan", "Asenov", "cutomer2@test.com", "password");
-			createCustomer("Petar", "Danielov", "cutomer3@test.com", "password");
-			createCustomer("Borislav", "Hristov", "cutomer4@test.com", "password");
-			createCustomer("Viktor", "Petrov", "cutomer5@test.com", "password");
-			createCustomer("Bojidar", "Yordanov", "cutomer6@test.com", "password");
-			createCustomer("Borislav", "Borisov", "cutomer7@test.com", "password");
-			createCustomer("Ani", "Tomova", "cutomer8@test.com", "password");
-			createCustomer("Plamen", "Jivkov", "cutomer9@test.com", "password");
-			createCustomer("Mario", "Kristianov", "cutomer10@test.com", "password");
-			createCustomer("Asen", "Plamenov", "cutomer11@test.com", "password");
-			createCustomer("Daniel", "Kosev", "cutomer12@test.com", "password");
+			createCustomer("Tosho", "Grigorov", "customer1@test.com", "password");
+			createCustomer("Ivan", "Asenov", "customer2@test.com", "password");
+			createCustomer("Petar", "Danielov", "customer3@test.com", "password");
+			createCustomer("Borislav", "Hristov", "customer4@test.com", "password");
+			createCustomer("Viktor", "Petrov", "customer5@test.com", "password");
+			createCustomer("Bojidar", "Yordanov", "customer6@test.com", "password");
+			createCustomer("Borislav", "Borisov", "customer7@test.com", "password");
+			createCustomer("Ani", "Tomova", "customer8@test.com", "password");
+			createCustomer("Plamen", "Jivkov", "customer9@test.com", "password");
+			createCustomer("Mario", "Kristianov", "customer10@test.com", "password");
+			createCustomer("Asen", "Plamenov", "customer11@test.com", "password");
+			createCustomer("Daniel", "Kosev", "customer12@test.com", "password");
 
 			createOffice("Sofia, Blvd Bulgaria, 1", true);
 			createOffice("Sofia, Blvd Todor Kableshkov, 34", true);
