@@ -94,7 +94,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col-2" th:text="${'Total paid: ' + totalPaid}">test1</div>
-                    <div class="col-3" th:text="${'Total remaining payment: ' + remainingPayment}">test1</div>
+                    <div class="col-3" th:text="${'Total unpaid: ' + remainingPayment}">test1</div>
                     <nav class="col-7" aria-label="Pagination" th:if="${totalPages > 0}">
                         <ul class="pagination justify-content-end">
                             <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
