@@ -91,38 +91,41 @@
                 <span>No parcels found!</span>
             </div>
 
-            <nav aria-label="Pagination" th:if="${totalPages > 0}">
-                <div class="d-flex w-100">
-                    <ul>test 0</ul>
-                    <ul>test 1</ul>
-                    <ul class="pagination justify-content-end">
-                        <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
-                            <a th:replace="~{base :: paging('/parcels', 1, '<<', 'First Page')}"></a>
-                        </li>
-                        <li class="page-item font-weight-bold" th:classappend="${currentPage == 1} ? 'disabled'">
-                            <a
-                                th:replace="~{base :: paging('/parcels', ${currentPage - 1}, 'Prev', 'Previous Page')}"></a>
-                        </li>
-                        <li class="page-item disabled" th:if="${currentPage - 2 > 1}">
-                            <a class="page-link" href="#">...</a>
-                        </li>
-                        <li class="page-item" th:classappend="${page == currentPage} ? 'active'"
-                            th:each="page : ${#numbers.sequence(currentPage > 2 ? currentPage - 2 : 1, currentPage + 2 < totalPages ? currentPage + 2 : totalPages)}">
-                            <a th:replace="~{base :: paging('/parcels', ${page}, ${page}, 'Page ' + ${page})}"></a>
-                        </li>
-                        <li class="page-item disabled" th:if="${currentPage + 2 < totalPages}">
-                            <a class="page-link" href="#">...</a>
-                        </li>
-                        <li class="page-item font-weight-bold"
-                            th:classappend="${currentPage == totalPages} ? 'disabled'">
-                            <a th:replace="~{base :: paging('/parcels', ${currentPage + 1},'Next', 'Next Page')}"></a>
-                        </li>
-                        <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
-                            <a th:replace="~{base :: paging('/parcels', ${totalPages}, '>>', 'Last Page')}"></a>
-                        </li>
-                    </ul>
+            <div class="container">
+                <div class="row">
+                    <div class="col-2" th:text="${'Total paid: ' + totalPaid}">test1</div>
+                    <div class="col-3" th:text="${'Total remaining payment: ' + remainingPayment}">test1</div>
+                    <nav class="col-7" aria-label="Pagination" th:if="${totalPages > 0}">
+                        <ul class="pagination justify-content-end">
+                            <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                                <a th:replace="~{base :: paging('/parcels', 1, '<<', 'First Page')}"></a>
+                            </li>
+                            <li class="page-item font-weight-bold" th:classappend="${currentPage == 1} ? 'disabled'">
+                                <a
+                                    th:replace="~{base :: paging('/parcels', ${currentPage - 1}, 'Prev', 'Previous Page')}"></a>
+                            </li>
+                            <li class="page-item disabled" th:if="${currentPage - 2 > 1}">
+                                <a class="page-link" href="#">...</a>
+                            </li>
+                            <li class="page-item" th:classappend="${page == currentPage} ? 'active'"
+                                th:each="page : ${#numbers.sequence(currentPage > 2 ? currentPage - 2 : 1, currentPage + 2 < totalPages ? currentPage + 2 : totalPages)}">
+                                <a th:replace="~{base :: paging('/parcels', ${page}, ${page}, 'Page ' + ${page})}"></a>
+                            </li>
+                            <li class="page-item disabled" th:if="${currentPage + 2 < totalPages}">
+                                <a class="page-link" href="#">...</a>
+                            </li>
+                            <li class="page-item font-weight-bold"
+                                th:classappend="${currentPage == totalPages} ? 'disabled'">
+                                <a
+                                    th:replace="~{base :: paging('/parcels', ${currentPage + 1},'Next', 'Next Page')}"></a>
+                            </li>
+                            <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                                <a th:replace="~{base :: paging('/parcels', ${totalPages}, '>>', 'Last Page')}"></a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
-            </nav>
+            </div>
         </div>
     </div>
 </body>

@@ -89,12 +89,19 @@ public class ParcelController {
 				// List<Parcel> parcels1 = new ArrayList<Parcel>();
 				pageParcels = parcelRepository.findAll(paging);
 
+				var all = parcelRepository.findAll();
+				var totalPaid = all.stream().filter(p -> p.getIsPaid()).map(p -> p.getPrice()).reduce(BigDecimal.ZERO,
+						BigDecimal::add);
+				var remainingPayment = all.stream().filter(p -> !p.getIsPaid()).map(p -> p.getPrice())
+						.reduce(BigDecimal.ZERO, BigDecimal::add);
 				var parcels1 = pageParcels.getContent();
 				model.addAttribute("parcels", parcels1);
 				model.addAttribute("currentPage", pageParcels.getNumber() + 1);
 				model.addAttribute("totalItems", pageParcels.getTotalElements());
 				model.addAttribute("totalPages", pageParcels.getTotalPages());
 				model.addAttribute("pageSize", size);
+				model.addAttribute("totalPaid", totalPaid);
+				model.addAttribute("remainingPayment", remainingPayment);
 				return "/parcels/list-employee";
 			} else if (getLoggedInUserRole().equals("ADMIN")) {
 
