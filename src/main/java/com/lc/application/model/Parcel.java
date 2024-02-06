@@ -3,6 +3,8 @@ package com.lc.application.model;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -42,19 +44,18 @@ public class Parcel {
 
 	private BigDecimal weight;
 
-	private LocalDate  orderDate;
+	private LocalDate orderDate;
 
-	private LocalDate  deliveryDate;
+	private LocalDate deliveryDate;
 
 	private Boolean isPaid;
 
 	private BigDecimal price;
 
-	// enum ?
-	private String status;
+	@Enumerated(EnumType.STRING)
+	private DeliveryStatus status;
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = true)
 	@JoinColumn(name = "employee_id", nullable = true)
 	private Employee registeredBy;
-
 }

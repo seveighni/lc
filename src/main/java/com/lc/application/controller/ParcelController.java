@@ -31,7 +31,9 @@ import com.lc.application.dto.CreateParcelDto;
 import com.lc.application.dto.ParcelDto;
 import com.lc.application.dto.ResultDto;
 import com.lc.application.model.Customer;
+import com.lc.application.model.DeliveryStatus;
 import com.lc.application.model.Employee;
+import com.lc.application.model.Office;
 import com.lc.application.model.Parcel;
 import com.lc.application.repository.CustomerRepository;
 import com.lc.application.repository.EmployeeRepository;
@@ -74,15 +76,21 @@ public class ParcelController {
 			Page<Parcel> pageParcels = null;
 
 			com.lc.application.model.User loggedInUser = getLoggedInUser();
-			if (getLoggedInUserRole().contains("CUSTOMER")) {
+			if (getLoggedInUserRole().equals("CUSTOMER")) {
 				pageParcels = parcelRepository.findAllBySenderId(paging, loggedInUser.getId());
 
-			} else if (getLoggedInUserRole().contains("EMPLOYEE")) {
+			} else if (getLoggedInUserRole().equals("EMPLOYEE")) {
+				// List<Parcel> parcels1 = new ArrayList<Parcel>();
+				pageParcels = parcelRepository.findAll(paging);
 
-				//
-
-				pageParcels = parcelRepository.findAllByRegisteredById(paging, loggedInUser.getId());
-			} else if (getLoggedInUserRole().contains("ADMIN")) {
+				var parcels1 = pageParcels.getContent();
+				model.addAttribute("parcels", parcels1);
+				model.addAttribute("currentPage", pageParcels.getNumber() + 1);
+				model.addAttribute("totalItems", pageParcels.getTotalElements());
+				model.addAttribute("totalPages", pageParcels.getTotalPages());
+				model.addAttribute("pageSize", size);
+				return "/parcels/list-employee";
+			} else if (getLoggedInUserRole().equals("ADMIN")) {
 
 				//
 
@@ -307,6 +315,8 @@ public class ParcelController {
 		var loggedInUser = getLoggedInUser();
 		var employee = employeeRepository.getEmployeeIdByUserEmail(loggedInUser.getEmail());
 		parcel.setRegisteredBy(employee.get());
+
+		parcel.setStatus(DeliveryStatus.NEW);
 
 		parcelRepository.save(parcel);
 
