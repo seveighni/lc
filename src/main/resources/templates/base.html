@@ -63,7 +63,7 @@
                             <a class="nav-link" th:href="@{/customers}">Customers</a>
                         </li>
 
-                        <li sec:authorize="hasAnyAuthority('EMPLOYEE','CUSTOMER')">
+                        <li sec:authorize="hasAnyAuthority('EMPLOYEE')">
                             <div class="dropdown">
                                 <span class="navbar-text">
                                     <a class="nav-link" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown"
@@ -76,17 +76,12 @@
                                                 th:href="@{/parcels/create}">Create new</a></li>
                                         <li sec:authorize="hasAnyAuthority('EMPLOYEE')"><a class="dropdown-item"
                                                 th:href="@{/parcels/registeredBy}">Registered by me</a></li>
-
-                                        <li sec:authorize="hasAnyAuthority('CUSTOMER')"><a class="dropdown-item"
-                                                th:href="@{/parcels/sentBy}">Sent by me</a></li>
-                                        <li sec:authorize="hasAnyAuthority('CUSTOMER')"><a class="dropdown-item"
-                                                th:href="@{/parcels/sentTo}">Sent to me</a></li>
                                     </ul>
                                 </span>
                             </div>
                         </li>
 
-                        <li sec:authorize="hasAnyAuthority('ADMIN')" class="nav-item">
+                        <li sec:authorize="hasAnyAuthority('ADMIN','CUSTOMER')" class="nav-item">
                             <a class="nav-link" th:href="@{/parcels}">Parcels</a>
                         </li>
 

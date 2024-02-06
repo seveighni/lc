@@ -10,15 +10,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.lc.application.dto.ResultDto;
 import com.lc.application.dto.UserDto;
 import com.lc.application.model.Employee;
 import com.lc.application.model.Role;
@@ -26,8 +22,6 @@ import com.lc.application.model.User;
 import com.lc.application.repository.EmployeeRepository;
 import com.lc.application.repository.RoleRepository;
 import com.lc.application.repository.UserRepository;
-
-import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping(value = "/users")
@@ -116,34 +110,5 @@ public class UserController {
 		employee.setUser(user);
 		employee.setActive(true);
 		employeeRepository.save(employee);
-	}
-
-	@PostMapping("/{id}")
-	public String putOffice(@Valid @ModelAttribute("userDto") UserDto dto, BindingResult result, Model model,
-			@PathVariable Long id) {
-		try {
-			if (result.hasErrors()) {
-				model.addAttribute("userDto", dto);
-				return "/profile";
-			}
-
-			// TODO
-			User user = userRepository.findByEmail(dto.getEmail());
-			// if (opt.isEmpty()) {
-			if (user == null) {
-				model.addAttribute("message", "User not found");
-				return "redirect:/home";
-			}
-
-			user.setEmail(dto.getEmail());
-			user.setFirstName(dto.getFirstName());
-			user.setLastName(dto.getLastName());
-			userRepository.save(user);
-		} catch (Exception e) {
-			model.addAttribute("message", e.getMessage());
-		}
-
-		model.addAttribute("result", new ResultDto("User updated successfully!", true));
-		return "/profile";
 	}
 }
