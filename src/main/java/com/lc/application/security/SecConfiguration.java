@@ -3,6 +3,7 @@ package com.lc.application.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -26,12 +27,14 @@ public class SecConfiguration {
         http.csrf().disable()
                 .authorizeHttpRequests((authorize) -> authorize.requestMatchers("/register/**").permitAll()
                 .requestMatchers("/profile").authenticated()
-                .requestMatchers("/offices/**").authenticated() // TODO fix this
+                .requestMatchers(HttpMethod.GET, "/offices").hasAuthority("CUSTOMER")
+                .requestMatchers("/offices/**").hasAnyAuthority("ADMIN","EMPLOYEE") // TODO fix this
                 .requestMatchers("/users/**").hasAuthority("ADMIN")
                 .requestMatchers("/employees/**").hasAuthority("ADMIN")
                 .requestMatchers("/rates/**").hasAnyAuthority("ADMIN","EMPLOYEE")
                 .requestMatchers("/customers/**").hasAnyAuthority("ADMIN","EMPLOYEE")
-                .requestMatchers("/parcels/**").hasAnyAuthority("ADMIN","EMPLOYEE","CUSTOMER")
+                .requestMatchers(HttpMethod.GET, "/parcels").hasAuthority("CUSTOMER")
+                .requestMatchers("/parcels/**").hasAnyAuthority("ADMIN","EMPLOYEE")
                 .requestMatchers("/home").authenticated())
                 .formLogin(
                         form -> form
