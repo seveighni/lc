@@ -24,7 +24,7 @@ import com.lc.application.repository.UserRepository;
 import jakarta.transaction.Transactional;
 
 @Component
-public class DataLoader  {
+public class DataLoader {
 
 	@Autowired
 	UserRepository userRepository;
@@ -46,46 +46,39 @@ public class DataLoader  {
 	public void loadUserData(ContextRefreshedEvent event) {
 		if (userRepository.count() == 0) {
 
-			var admin = createUser("Stefan", "Stefanov", "admin@test.com", "password");
+			var admin = createUser("Stefan", "Kirilov", "admin@test.com", "password");
 			addRole(admin.getId(), "ADMIN");
 
-			var employeeUser = createUser("Georgi", "Georgiev", "employee@test.com", "password");
-			addRole(employeeUser.getId(), "EMPLOYEE");
-			Employee employee = new Employee();
-			employee.setUser(employeeUser);
-			employee.setActive(true);
-			employeeRepository.save(employee);
+			createEmployee("Georgi", "Todorov", "employee1@test.com", "password", "Office", true);
+			createEmployee("Gordan", "Ivanov", "employee2@test.com", "password", "Office", true);
+			createEmployee("Grigor", "Toshov", "employee3@test.com", "password", "Delivery", true);
+			createEmployee("Yasen", "Atanasov", "employee4@test.com", "password", "Office", false);
 
-			var usr3 = createUser("Galya", "Galyova", "employeeToBe@test.com", "password");
+			createUser("Galya", "Dimitrova", "employeeToBe1@test.com", "password");
+			createUser("Ivan", "Gabrielov", "employeeToBe2@test.com", "password");
 
-			var customerUser = createUser("Tosho", "Toshov", "tosho@test.com", "password");
-			addRole(customerUser.getId(), "CUSTOMER");
-			Customer customer = new Customer();
-			customer.setUser(customerUser);
-			customerRepository.save(customer);
+			createCustomer("Tosho", "Grigorov", "cutomer1@test.com", "password");
+			createCustomer("Ivan", "Asenov", "cutomer2@test.com", "password");
+			createCustomer("Petar", "Danielov", "cutomer3@test.com", "password");
+			createCustomer("Borislav", "Hristov", "cutomer4@test.com", "password");
+			createCustomer("Viktor", "Petrov", "cutomer5@test.com", "password");
+			createCustomer("Bojidar", "Yordanov", "cutomer6@test.com", "password");
+			createCustomer("Borislav", "Borisov", "cutomer7@test.com", "password");
+			createCustomer("Ani", "Tomova", "cutomer8@test.com", "password");
+			createCustomer("Plamen", "Jivkov", "cutomer9@test.com", "password");
+			createCustomer("Mario", "Kristianov", "cutomer10@test.com", "password");
+			createCustomer("Asen", "Plamenov", "cutomer11@test.com", "password");
+			createCustomer("Daniel", "Kosev", "cutomer12@test.com", "password");
 
-			var customerUserTwo = createUser("Ivan", "Ivanov", "ivan@test.com", "password");
-			addRole(customerUserTwo.getId(), "CUSTOMER");
-			Customer customerTwo = new Customer();
-			customerTwo.setUser(customerUserTwo);
-			customerRepository.save(customerTwo);
+			createOffice("Sofia, Blvd Bulgaria, 1", true);
+			createOffice("Sofia, Blvd Todor Kableshkov, 34", true);
+			createOffice("Sofia, Blvd Filip Kutev, 5", false);
+			createOffice("Sofia, Blvd Cherni Vruh, 17", true);
 
-			Office office = new Office();
-			office.setAddress("Sofia, Blvd Bulgaria, 1");
-			office.setIsActive(true);
-			officeRepository.save(office);
+			createRate("ShipToOffice", 0.5, 4.69);
+			createRate("ShipToAddress", 0.6, 6.69);
 
-			Rates rateForOffice = new Rates();
-			rateForOffice.setName("ShipToOffice");
-			rateForOffice.setPerKg(new BigDecimal(0.5));
-			rateForOffice.setFlatRate(new BigDecimal(4.69));
-			ratesRepository.save(rateForOffice);
-
-			Rates rateForAddress = new Rates();
-			rateForAddress.setName("ShipToAddress");
-			rateForAddress.setPerKg(new BigDecimal(0.6));
-			rateForAddress.setFlatRate(new BigDecimal(6.69));
-			ratesRepository.save(rateForAddress);
+			// TODO Parcels
 		}
 	}
 
@@ -110,5 +103,39 @@ public class DataLoader  {
 			user.addRole(role);
 			userRepository.save(user);
 		}
+	}
+
+	private void createEmployee(String firstName, String lastName, String email, String password, String type,
+			boolean isActive) {
+		var employeeUser = createUser(firstName, lastName, email, password);
+		addRole(employeeUser.getId(), "EMPLOYEE");
+		Employee employee = new Employee();
+		employee.setUser(employeeUser);
+		employee.setType(type);
+		employee.setActive(isActive);
+		employeeRepository.save(employee);
+	}
+
+	private void createCustomer(String firstName, String lastName, String email, String password) {
+		var customerUser = createUser(firstName, lastName, email, password);
+		addRole(customerUser.getId(), "CUSTOMER");
+		Customer customer = new Customer();
+		customer.setUser(customerUser);
+		customerRepository.save(customer);
+	}
+
+	private void createOffice(String address, boolean isActive) {
+		Office office = new Office();
+		office.setAddress(address);
+		office.setIsActive(isActive);
+		officeRepository.save(office);
+	}
+
+	private void createRate(String name, double perKg, double flatRate) {
+		Rates rateForOffice = new Rates();
+		rateForOffice.setName(name);
+		rateForOffice.setPerKg(new BigDecimal(perKg));
+		rateForOffice.setFlatRate(new BigDecimal(flatRate));
+		ratesRepository.save(rateForOffice);
 	}
 }
