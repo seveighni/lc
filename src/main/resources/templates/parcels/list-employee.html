@@ -53,8 +53,10 @@
                             <th scope="col">Sender</th>
                             <th scope="col">Receiver</th>
                             <th scope="col">Address</th>
+                            <th scope="col">Price</th>
                             <th scope="col">Paid</th>
                             <th scope="col">Status</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -68,11 +70,16 @@
                             <td th:text="${parcel.receiver.user.firstName + ' ' + parcel.receiver.user.lastName}"></td>
                             <td th:if="${parcel.office != null}" th:text="${parcel.office.address}"></td>
                             <td th:unless="${parcel.office != null}" th:text="${parcel.address}"></td>
+                            <td th:text="${parcel.price}"></td>
                             <td>
                                 <span th:if="${parcel.isPaid == true}"><i class="fa fa-check"></i></span>
                                 <span th:unless="${parcel.isPaid == true}"></span>
                             </td>
                             <td th:text="${parcel.status}"></td>
+                            <td>
+                                <a th:href="@{/parcels/{id}(id=${parcel.id})}" title="Edit"
+                                    class="fa-regular fa-pen-to-square icon-dark"></a>
+                            </td>
                         </tr>
                     </tbody>
                 </table>

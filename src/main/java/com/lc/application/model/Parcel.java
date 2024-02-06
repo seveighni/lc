@@ -1,7 +1,8 @@
 package com.lc.application.model;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -44,9 +45,9 @@ public class Parcel {
 
 	private BigDecimal weight;
 
-	private LocalDate orderDate;
+	private LocalDateTime orderDate;
 
-	private LocalDate deliveryDate;
+	private LocalDateTime statusLastUpdateDate;
 
 	private Boolean isPaid;
 

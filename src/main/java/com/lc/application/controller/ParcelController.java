@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -23,6 +23,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,10 +31,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.lc.application.dto.CreateParcelDto;
 import com.lc.application.dto.ParcelDto;
 import com.lc.application.dto.ResultDto;
+import com.lc.application.dto.UpdateParcelDto;
 import com.lc.application.model.Customer;
 import com.lc.application.model.DeliveryStatus;
 import com.lc.application.model.Employee;
-import com.lc.application.model.Office;
 import com.lc.application.model.Parcel;
 import com.lc.application.repository.CustomerRepository;
 import com.lc.application.repository.EmployeeRepository;
@@ -309,7 +310,10 @@ public class ParcelController {
 		var price = dto.getWeight().multiply(rate.getPerKg());
 		price = price.add(rate.getFlatRate());
 		parcel.setPrice(price);
-		parcel.setOrderDate(LocalDate.now());
+
+		var now = LocalDateTime.now();
+		parcel.setOrderDate(now);
+		parcel.setStatusLastUpdateDate(now);
 		parcel.setIsPaid(dto.getIsPaid());
 
 		var loggedInUser = getLoggedInUser();
@@ -324,4 +328,57 @@ public class ParcelController {
 		return "/parcels/create";
 	}
 
+
+	@GetMapping("/{id}")
+	public String getParcel(Model model, @PathVariable Long id) {
+		try {
+			Optional<Parcel> parcelOpt = parcelRepository.findById(id);
+			if (parcelOpt.isEmpty()) {
+				model.addAttribute("message", "Parcel not found");
+				return "/parcels/edit";
+			}
+			var parcel = parcelOpt.get();
+			UpdateParcelDto parcelDto = new UpdateParcelDto();
+			parcelDto.setId(parcel.getId());
+			parcelDto.setIsPaid(parcel.getIsPaid());
+			parcelDto.setStatus(parcel.getStatus());
+			model.addAttribute("updateParcelDTO", parcelDto);
+		} catch (Exception e) {
+			model.addAttribute("message", e.getMessage());
+		}
+		return "/parcels/edit";
+	}
+
+	@PostMapping("/{id}")
+	public String putParcel(@Valid @ModelAttribute("parcel") UpdateParcelDto dto, BindingResult result, Model model,
+			@PathVariable Long id) {
+		try {
+			if (result.hasErrors()) {
+				model.addAttribute("parcel", dto);
+				return "/parcels/edit";
+			}
+
+			var opt = parcelRepository.findById(id);
+			if (opt.isEmpty()) {
+				model.addAttribute("message", "Parcel not found");
+				return "/parcels/edit";
+			}
+			var parcel = opt.get();
+			parcel.setIsPaid(dto.getIsPaid());
+			parcel.setStatus(dto.getStatus());
+			parcel.setStatusLastUpdateDate(LocalDateTime.now());
+			parcelRepository.save(parcel);
+
+			UpdateParcelDto parcelDto = new UpdateParcelDto();
+			parcelDto.setId(parcel.getId());
+			parcelDto.setIsPaid(parcel.getIsPaid());
+			parcelDto.setStatus(parcel.getStatus());
+			model.addAttribute("updateParcelDTO", parcelDto);
+		} catch (Exception e) {
+			model.addAttribute("message", e.getMessage());
+		}
+
+		model.addAttribute("result", new ResultDto("Parcel updated successfully!", true));
+		return "/parcels/edit";
+	}
 }
