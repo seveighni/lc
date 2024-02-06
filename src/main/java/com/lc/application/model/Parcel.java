@@ -35,7 +35,7 @@ public class Parcel {
 	private Customer receiver;
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = true)
-	@JoinColumn(name = "office_id", nullable = false)
+	@JoinColumn(name = "office_id", nullable = true)
 	private Office office;
 
 	private String address;

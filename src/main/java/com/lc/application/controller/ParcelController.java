@@ -304,13 +304,7 @@ public class ParcelController {
 		parcel.setOrderDate(LocalDate.now());
 		parcel.setIsPaid(dto.getIsPaid());
 
-		System.out.println(dto.getFrom());
-		System.out.println(dto.getTo());
-		System.out.println(dto.getWeight());
-		System.out.println(dto.getOfficeId());
-		System.out.println(dto.getAddress());
-		System.out.println(dto.getRateId());
-		System.out.println(dto.getIsPaid());
+		parcelRepository.save(parcel);
 
 		model.addAttribute("result", new ResultDto("Parcel created successfully!", true));
 		return "/parcels/create";
