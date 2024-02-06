@@ -15,4 +15,6 @@ public interface ParcelRepository extends JpaRepository<Parcel, Long> {
 	Page<Parcel> findAllByRegisteredById(PageRequest paging, Long employeeId);
 
 	Page<Parcel> findAllByStatus(PageRequest paging, String status);
+
+	Page<Parcel> findAllByReceiverIdOrSenderId(PageRequest paging, Long recieverId, Long senderId);
 }

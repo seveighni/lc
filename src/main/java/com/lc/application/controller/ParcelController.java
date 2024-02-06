@@ -72,14 +72,19 @@ public class ParcelController {
 			@RequestParam(defaultValue = "5") int size) {
 
 		try {
-			List<ParcelDto> parcels = new ArrayList<ParcelDto>();
+			List<Parcel> parcels = new ArrayList<Parcel>();
 			var paging = PageRequest.of(page - 1, size, Sort.by("id"));
 			Page<Parcel> pageParcels = null;
 
 			com.lc.application.model.User loggedInUser = getLoggedInUser();
-			if (getLoggedInUserRole().equals("CUSTOMER")) {
-				pageParcels = parcelRepository.findAllBySenderId(paging, loggedInUser.getId());
-
+			if (getLoggedInUserRole().contains("CUSTOMER")) {
+				Optional<Customer> customer = customerRepository.getCustomerIdByUserEmail(loggedInUser.getEmail());
+				if (customer.isPresent()) {
+					Long customerId = customer.get().getId();
+					pageParcels = parcelRepository.findAllByReceiverIdOrSenderId(paging, customerId, customerId);
+				} else {
+					model.addAttribute("result", new ResultDto("Customer not found!", false));
+				}
 			} else if (getLoggedInUserRole().equals("EMPLOYEE")) {
 				// List<Parcel> parcels1 = new ArrayList<Parcel>();
 				pageParcels = parcelRepository.findAll(paging);
@@ -112,13 +117,20 @@ public class ParcelController {
 				model.addAttribute("result", new ResultDto("Start date should be before end date.", false));
 				return "/parcels/parcels-list";
 			}*/
+
+			parcels = pageParcels.getContent();
+
+			model.addAttribute("parcels", parcels);
+			model.addAttribute("currentPage", pageParcels.getNumber() + 1);
+			model.addAttribute("totalItems", pageParcels.getTotalElements());
+			model.addAttribute("totalPages", pageParcels.getTotalPages());
+			model.addAttribute("pageSize", size);
+
 		} catch (Exception e) {
 			model.addAttribute("message", e.getMessage());
 		}
 
-		// TODO - remove below method after this is completed
-		loadModelWithWantedPagedParcels(model, false, page, size);
-		return "/parcels/parcels-list";
+		return "/parcels/list-employee";
 	}
 
 	private com.lc.application.model.User getLoggedInUser() {
