@@ -18,28 +18,98 @@
 
     <div class="container">
         <div class="container justify-content-center p-5">
-            <form class="d-flex w-100 mt-3" th:action="@{/parcels}" id="searchForm">
-                <div class="search d-flex w-100">
-                    <label class="input-group-text me-2" for="startDate">Start date:</label>
-                    <input type="date" class="form-control me-2" id="startDate" th:name="startDate"
-                        th:value="${startDate}" placeholder="startDate">
-                    <label class="input-group-text me-2" for="endDate">End date:</label>
-                    <input type="date" class="form-control me-2" id="endDate" th:name="endDate" th:value="${endDate}"
-                        placeholder="endDate">
-                    <label class="input-group-text me-2" for="searchBy">Search by:</label>
-                    <select form="searchForm" name="searchBy" th:value="${searchBy}" class="size-select me-2"
-                        id="searchBy">
-                        <option th:each="opt : ${ { 'sender' , 'reciever', 'registerer', 'sent but not recieved'} }"
-                            th:value="${opt}" th:text="${opt}" th:selected="${opt == searchBy}"></option>
-                    </select>
-                    <input id="email" type="search" name="email" th:value="${email}" class="form-control me-2"
-                        placeholder="Filter by email">
-                    <label class="input-group-text me-2" for="pageSize">Items per page:</label>
-                    <select form="searchForm" name="size" th:value="${pageSize}" class="size-select me-2" id="pageSize">
-                        <option th:each="s : ${ {5, 10, 20} }" th:value="${s}" th:text="${s}"
-                            th:selected="${s == pageSize}"></option>
-                    </select>
-                    <button type="submit" class="btn btn-outline-primary">Search</button>
+            <form class="row g-3 mt-3" th:action="@{/parcels}" id="searchForm">
+
+                <div class="col-md-4">
+                    <div class="container">
+                        <div class="row">
+                            <label class="input-group-text col-4" for="responsible">Responsible</label>
+                            <div class="col-8 ps-0 pe-0">
+                                <input id="email" type="search" th:name="responsible" th:value="${responsible}"
+                                    class="form-control" placeholder="Email of responsible employee">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-md-4">
+                    <div class="container">
+                        <div class="row">
+                            <label class="input-group-text col-4" for="sender">Sender</label>
+                            <div class="col-8 ps-0 pe-0">
+                                <input id="email" type="search" th:name="sender" th:value="${sender}"
+                                    class="form-control" placeholder="Email of sender">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-md-4">
+                    <div class="container">
+                        <div class="row">
+                            <label class="input-group-text col-4" for="receiver">Receiver</label>
+                            <div class="col-8 ps-0 pe-0">
+                                <input id="email" type="search" th:name="receiver" th:value="${receiver}"
+                                    class="form-control" placeholder="Email of receiver">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="col-md-4">
+                    <div class="container">
+                        <div class="row">
+                            <label class="input-group-text col-4" for="startDate">Start date</label>
+                            <div class="col-8 ps-0 pe-0">
+                                <input type="date" class="form-control" id="startDate" th:name="startDate"
+                                    th:value="${startDate}" placeholder="startDate">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="container">
+                        <div class="row">
+                            <label class="input-group-text col-4" for="endDate">End date</label>
+                            <div class="col-8 ps-0 pe-0">
+                                <input type="date" class="form-control" id="endDate" th:name="endDate"
+                                    th:value="${endDate}" placeholder="endDate">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="container">
+                        <div class="row">
+                            <label class="input-group-text col-4" for="status">Status</label>
+                            <div class="col-8 ps-0 pe-0">
+                                <select class="form-control" th:name="status">
+                                    <option value="" text=""></option>
+                                    <option th:each="statusOpt : ${T(com.lc.application.model.DeliveryStatus).values()}"
+                                        th:value="${statusOpt}" th:text="${statusOpt}"></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="container">
+                        <div class="row">
+                            <label class="input-group-text col-auto" for="pageSize">Items per page</label>
+                            <div class="col-auto ps-0 pe-2">
+                                <select form="searchForm" name="size" th:value="${pageSize}" class="form-control size-select me-2"
+                                    id="pageSize">
+                                    <option th:each="s : ${ {5, 10, 20} }" th:value="${s}" th:text="${s}"
+                                        th:selected="${s == pageSize}"></option>
+                                </select>
+                            </div>
+                            <div class="col-auto ps-0 pe-0">
+                                <button type="submit" class="btn btn-outline-primary">Search</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </form>
 
@@ -93,8 +163,8 @@
 
             <div class="container">
                 <div class="row">
-                    <div class="col-2" th:text="${'Total paid: ' + totalPaid}">test1</div>
-                    <div class="col-3" th:text="${'Total unpaid: ' + remainingPayment}">test1</div>
+                    <div class="col-2" th:text="${'Total paid: ' + totalPaid}"></div>
+                    <div class="col-3" th:text="${'Total unpaid: ' + remainingPayment}"></div>
                     <nav class="col-7" aria-label="Pagination" th:if="${totalPages > 0}">
                         <ul class="pagination justify-content-end">
                             <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
