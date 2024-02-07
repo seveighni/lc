@@ -57,33 +57,33 @@
 
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="container">
                         <div class="row">
-                            <label class="input-group-text col-4" for="startDate">Start date</label>
-                            <div class="col-8 ps-0 pe-0">
+                            <label class="input-group-text col-6" for="startDate">Start date</label>
+                            <div class="col-6 ps-0 pe-0">
                                 <input type="date" class="form-control" id="startDate" th:name="startDate"
                                     th:value="${startDate}" placeholder="startDate">
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="container">
                         <div class="row">
-                            <label class="input-group-text col-4" for="endDate">End date</label>
-                            <div class="col-8 ps-0 pe-0">
+                            <label class="input-group-text col-6" for="endDate">End date</label>
+                            <div class="col-6 ps-0 pe-0">
                                 <input type="date" class="form-control" id="endDate" th:name="endDate"
                                     th:value="${endDate}" placeholder="endDate">
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="container">
                         <div class="row">
-                            <label class="input-group-text col-4" for="status">Status</label>
-                            <div class="col-8 ps-0 pe-0">
+                            <label class="input-group-text col-6" for="status">Status</label>
+                            <div class="col-6 ps-0 pe-0">
                                 <select class="form-control" th:name="status">
                                     <option value="" text=""></option>
                                     <option th:each="statusOpt : ${T(com.lc.application.model.DeliveryStatus).values()}"
@@ -93,7 +93,17 @@
                         </div>
                     </div>
                 </div>
-
+                <div class="col-md-3">
+                    <div class="container">
+                        <div class="row">
+                            <label class="input-group-text col-6">Paid</label>
+                            <div class="col-6 ps-2 pe-0 d-flex align-items-center">
+                                <input class="form-check-input mt-0" type="checkbox" th:name="isPaid" th:value="${isPaid}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+               
                 <div class="col-12">
                     <div class="container">
                         <div class="row">
@@ -113,7 +123,7 @@
                 </div>
             </form>
 
-            <div th:if="${parcels.size() > 0}">
+            <div class="mt-2" th:if="${parcels.size() > 0}">
                 <table class="table table-hover table-responsive-xl">
                     <thead class="thead-light">
                         <tr>
