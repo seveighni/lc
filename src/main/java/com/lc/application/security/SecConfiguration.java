@@ -26,18 +26,18 @@ public class SecConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeHttpRequests((authorize) -> authorize.requestMatchers("/register/**").permitAll()
-                .requestMatchers("/profile").authenticated()
-                .requestMatchers(HttpMethod.GET, "/offices").hasAnyAuthority("ADMIN","EMPLOYEE", "CUSTOMER")
-                .requestMatchers("/offices").hasAnyAuthority("ADMIN","EMPLOYEE")
-                .requestMatchers("/offices/**").hasAnyAuthority("ADMIN","EMPLOYEE") // TODO fix this
-                .requestMatchers("/users/**").hasAuthority("ADMIN")
-                .requestMatchers("/employees/**").hasAuthority("ADMIN")
-                .requestMatchers("/rates/**").hasAnyAuthority("ADMIN","EMPLOYEE")
-                .requestMatchers("/customers/**").hasAnyAuthority("ADMIN","EMPLOYEE")
-                .requestMatchers(HttpMethod.GET, "/parcels").hasAnyAuthority("ADMIN","EMPLOYEE", "CUSTOMER")
-                .requestMatchers("/parcels").hasAnyAuthority("ADMIN","EMPLOYEE")
-                .requestMatchers("/parcels/**").hasAnyAuthority("ADMIN","EMPLOYEE")
-                .requestMatchers("/home").authenticated())
+                        .requestMatchers("/profile").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/offices").hasAnyAuthority("ADMIN", "EMPLOYEE", "CUSTOMER")
+                        .requestMatchers("/offices").hasAnyAuthority("ADMIN", "EMPLOYEE")
+                        .requestMatchers("/offices/**").hasAnyAuthority("ADMIN", "EMPLOYEE") // TODO fix this
+                        .requestMatchers("/users/**").hasAuthority("ADMIN")
+                        .requestMatchers("/employees/**").hasAuthority("ADMIN")
+                        .requestMatchers("/rates/**").hasAnyAuthority("ADMIN", "EMPLOYEE")
+                        .requestMatchers("/customers/**").hasAnyAuthority("ADMIN", "EMPLOYEE")
+                        .requestMatchers(HttpMethod.GET, "/parcels").hasAnyAuthority("ADMIN", "EMPLOYEE", "CUSTOMER")
+                        .requestMatchers("/parcels").hasAnyAuthority("ADMIN", "EMPLOYEE")
+                        .requestMatchers("/parcels/**").hasAnyAuthority("ADMIN", "EMPLOYEE")
+                        .requestMatchers("/home").authenticated())
                 .formLogin(
                         form -> form
                                 .loginPage("/login")
@@ -47,7 +47,8 @@ public class SecConfiguration {
                 .logout(
                         logout -> logout
                                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                                .permitAll());
+                                .permitAll())
+                .exceptionHandling(e -> e.accessDeniedHandler(new RedirectAccessDeniedHandler()));
         return http.build();
     }
 
