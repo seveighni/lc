@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import org.springframework.data.jpa.domain.Specification;
 
+import com.lc.application.model.DeliveryStatus;
 import com.lc.application.model.Parcel;
 
 public class ParcelSpecification {
@@ -40,6 +41,18 @@ public class ParcelSpecification {
     public static Specification<Parcel> hasReceiver(String email) {
         return (root, query, cb) -> {
             return cb.equal(root.get("receiver").get("user").get("email"), email);
+        };
+    }
+
+    public static Specification<Parcel> isPaid(Boolean isPaid) {
+        return (root, query, cb) -> {
+            return cb.equal(root.get("isPaid"), isPaid);
+        };
+    }
+
+    public static Specification<Parcel> hasStatus(DeliveryStatus status) {
+        return (root, query, cb) -> {
+            return cb.equal(root.get("status"), status);
         };
     }
 }

@@ -105,11 +105,20 @@ public class ParcelController {
 					filter = filter.and(ParcelSpecification.hasEmployeeResponsible(parcelDto.getResponsible()));
 				}
 				if (parcelDto.getSender() != null && !parcelDto.getSender().isBlank()) {
-						filter = filter.and(ParcelSpecification.hasSender(parcelDto.getSender()));
+					filter = filter.and(ParcelSpecification.hasSender(parcelDto.getSender()));
 				}
 				if (parcelDto.getReceiver() != null && !parcelDto.getReceiver().isBlank()) {
-						filter = filter.and(ParcelSpecification.hasReceiver(parcelDto.getReceiver()));
+					filter = filter.and(ParcelSpecification.hasReceiver(parcelDto.getReceiver()));
 				}
+
+				if (parcelDto.getIsPaid() != null) {
+					filter = filter.and(ParcelSpecification.isPaid(parcelDto.getIsPaid()));
+				}
+
+				if (parcelDto.getStatus() != null) {
+					filter = filter.and(ParcelSpecification.hasStatus(parcelDto.getStatus()));
+				}
+
 				pageParcels = parcelRepository.findAll(filter, paging);
 
 				var all = parcelRepository.findAll();
@@ -132,10 +141,18 @@ public class ParcelController {
 					filter = filter.and(ParcelSpecification.hasEmployeeResponsible(parcelDto.getResponsible()));
 				}
 				if (parcelDto.getSender() != null && !parcelDto.getSender().isBlank()) {
-						filter = filter.and(ParcelSpecification.hasSender(parcelDto.getSender()));
+					filter = filter.and(ParcelSpecification.hasSender(parcelDto.getSender()));
 				}
 				if (parcelDto.getReceiver() != null && !parcelDto.getReceiver().isBlank()) {
-						filter = filter.and(ParcelSpecification.hasReceiver(parcelDto.getReceiver()));
+					filter = filter.and(ParcelSpecification.hasReceiver(parcelDto.getReceiver()));
+				}
+
+				if (parcelDto.getIsPaid() != null) {
+					filter = filter.and(ParcelSpecification.isPaid(parcelDto.getIsPaid()));
+				}
+
+				if (parcelDto.getStatus() != null) {
+					filter = filter.and(ParcelSpecification.hasStatus(parcelDto.getStatus()));
 				}
 				pageParcels = parcelRepository.findAll(filter, paging);
 			}
