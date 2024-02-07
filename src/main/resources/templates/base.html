@@ -28,7 +28,7 @@
                         <li sec:authorize="isAuthenticated()" class="nav-item">
                             <a class="nav-link active" aria-current="page" th:href="@{/home}">Home</a>
                         </li>
-                        <li sec:authorize="isAuthenticated()" class="nav-item">
+                        <li sec:authorize="hasAnyAuthority('ADMIN','EMPLOYEE','CUSTOMER')" class="nav-item">
                             <a class="nav-link" aria-current="page" th:href="@{/offices}">Offices</a>
                         </li>
                         <li sec:authorize="isAnonymous()" class="nav-item">
@@ -45,7 +45,7 @@
                                         aria-expanded="false">Users</a>
                                     <ul class="dropdown-menu dropdown-menu-lg-end"
                                         aria-labelledby="dropdownMenuButton1">
-                                        <li><a class="dropdown-item" th:href="@{/users}">Users</a></li>
+                                        <li><a class="dropdown-item" th:href="@{/users}">All</a></li>
                                         <li><a class="dropdown-item" th:href="@{/users/employees}">Waiting Approval</a>
                                         </li>
                                     </ul>
