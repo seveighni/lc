@@ -29,11 +29,11 @@
             </div>
             <div class=" form-group mt-3">
               <label for="perKg">Price per KG</label>
-              <input id="perKg" type="number" class="form-control" th:field="*{perKg}" name="perKg" required autofocus>
+              <input id="perKg" type="number" step="0.01" class="form-control" th:field="*{perKg}" name="perKg" required autofocus>
             </div>
             <div class=" form-group mt-3">
               <label for="flatRate">Flat rate</label>
-              <input id="flatRate" type="number" class="form-control" th:field="*{flatRate}" name="flatRate" required
+              <input id="flatRate" type="number" step="0.01" class="form-control" th:field="*{flatRate}" name="flatRate" required
                 autofocus>
             </div>
 
