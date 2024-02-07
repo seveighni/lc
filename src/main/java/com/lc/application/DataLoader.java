@@ -57,7 +57,7 @@ public class DataLoader {
 			createUser("Galya", "Dimitrova", "employeeToBe1@test.com", "password");
 			createUser("Ivan", "Gabrielov", "employeeToBe2@test.com", "password");
 
-			createCustomer("Tosho", "Grigorov", "customer1@test.com", "password");
+			createCustomer("Teodor", "Grigorov", "customer1@test.com", "password");
 			createCustomer("Ivan", "Asenov", "customer2@test.com", "password");
 			createCustomer("Petar", "Danielov", "customer3@test.com", "password");
 			createCustomer("Borislav", "Hristov", "customer4@test.com", "password");
