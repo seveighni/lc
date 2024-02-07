@@ -99,8 +99,11 @@
                             
                             <label class="input-group-text col-6">Paid</label>
                             <div class="col-6 ps-2 pe-0 d-flex align-items-center">
-                                <input class="form-check-input mt-0" type="checkbox" th:name="isPaid"
-                                    th:field="*{isPaid}" th:value="${isPaid}" id="isPaid">
+                                <select class="form-control" th:name="isPaid" th:field="*{isPaid}">
+                                    <option value="" text=""></option>
+                                    <option th:value=true th:text="Paid"></option>
+                                    <option th:value=false th:text="Unpaid"></option>
+                                </select>
                             </div>
                         </div>
                     </div>
