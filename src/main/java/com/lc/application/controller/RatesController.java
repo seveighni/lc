@@ -1,8 +1,9 @@
 package com.lc.application.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.lc.application.dto.RatesDto;
 import com.lc.application.dto.ResultDto;
@@ -27,10 +29,26 @@ public class RatesController {
 	private RatesRepository ratesRepository;
 
 	@GetMapping
-	public String getRates(Model model) {
-		List<Rates> rates = ratesRepository.findAll().stream().toList();
-		model.addAttribute("rate", new Rates());
-		model.addAttribute("rates", rates);
+	public String getRates(Model model, @RequestParam(required = false) String name,
+			@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "5") int size) {
+		try {
+			var paging = PageRequest.of(page - 1, size, Sort.by("id"));
+			Page<Rates> pageRates;
+			if (name == null) {
+				pageRates = ratesRepository.findAll(paging);
+			} else {
+				pageRates = ratesRepository.findByNameContainingIgnoreCase(name, paging);
+				model.addAttribute("name", name);
+			}
+			model.addAttribute("rate", new Rates());
+			model.addAttribute("rates", pageRates.getContent());
+			model.addAttribute("currentPage", pageRates.getNumber() + 1);
+			model.addAttribute("totalItems", pageRates.getTotalElements());
+			model.addAttribute("totalPages", pageRates.getTotalPages());
+			model.addAttribute("pageSize", size);
+		} catch (Exception e) {
+			model.addAttribute("message", e.getMessage());
+		}
 		return "/rates/rates-list";
 	}
 
@@ -50,9 +68,7 @@ public class RatesController {
 			model.addAttribute("message", e.getMessage());
 		}
 		model.addAttribute("rates", ratesRepository.findAll());
-		return "/rates/rates-list";
-
-		// TODO fix create form padding
+		return "redirect:/rates";
 	}
 
 	@GetMapping("/{id}")
