@@ -16,8 +16,7 @@
         <div class="container row justify-content-center p-5">
             <div class="card w-50">
                 <div class="card-body">
-                    <form class="me-auto ms-auto" method="POST" th:action="@{/profile}"
-                        th:object="${userDto}">
+                    <form class="me-auto ms-auto" method="POST" th:action="@{/profile}" th:object="${userDto}">
                         <div class=" form-group mt-3">
                             <label for="email">Email</label>
                             <input readonly id="email" type="email" class="form-control" th:field="*{email}"
@@ -48,6 +47,7 @@
                 </div>
             </div>
         </div>
+    </div>
 </body>
 
 </html>
