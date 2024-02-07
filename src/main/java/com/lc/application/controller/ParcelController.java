@@ -157,18 +157,6 @@ public class ParcelController {
 				pageParcels = parcelRepository.findAll(filter, paging);
 			}
 
-			// check dates
-			/*
-			 * model.addAttribute("startDate", startDate); model.addAttribute("endDate",
-			 * endDate); if (startDate.isEmpty() || endDate.isEmpty()) {
-			 * model.addAttribute("result", new ResultDto("Dates entered are not valid.",
-			 * false)); return "/parcels/parcels-list"; } Date start =
-			 * retirieveDate(startDate); Date end = retirieveDate(endDate); if
-			 * (start.after(end)) { model.addAttribute("result", new
-			 * ResultDto("Start date should be before end date.", false)); return
-			 * "/parcels/parcels-list"; }
-			 */
-
 			parcels = pageParcels.getContent();
 
 			model.addAttribute("parcelDto", parcelDto);
@@ -201,69 +189,6 @@ public class ParcelController {
 		DateFormat parser = new SimpleDateFormat("yyyy-MM-dd");
 		Date date = (Date) parser.parse(dateStr);
 		return date;
-	}
-
-	// TODO - remove
-	private void loadModelWithWantedPagedParcels(Model model, Boolean sentByMe, int page, int size) {
-		try {
-			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-			User principal = (User) auth.getPrincipal();
-			String userRoleType = auth.getAuthorities().stream().findFirst().get().toString();
-
-			List<SearchParcelDto> parcels = new ArrayList<SearchParcelDto>();
-			var paging = PageRequest.of(page - 1, size, Sort.by("id"));
-			Page<Parcel> pageOfParcels = null;
-
-			String userEmail = principal.getUsername();
-			if (userRoleType.equals("CUSTOMER")) {
-				Optional<Customer> customer = customerRepository.getCustomerIdByUserEmail(userEmail);
-				if (customer.isPresent()) {
-					Long userId = customer.get().getId();
-					if (sentByMe) {
-						pageOfParcels = parcelRepository.findAllBySenderId(paging, userId);
-
-					} else {
-						pageOfParcels = parcelRepository.findAllByReceiverId(paging, userId);
-
-					}
-				}
-			} else if (userRoleType.equals("EMPLOYEE")) {
-				if (sentByMe) {
-					Optional<Employee> employee = employeeRepository.getEmployeeIdByUserEmail(userEmail);
-					if (employee.isPresent()) {
-						Long userId = employee.get().getId();
-						pageOfParcels = parcelRepository.findAllByRegisteredById(paging, userId);
-					}
-				} else {
-					pageOfParcels = parcelRepository.findAll(paging);
-
-				}
-			} else if (userRoleType.equals("ADMIN")) {
-				pageOfParcels = parcelRepository.findAll(paging);
-
-			}
-			model.addAttribute("parcels", parcels);
-			model.addAttribute("currentPage", pageOfParcels.getNumber() + 1);
-			model.addAttribute("totalItems", pageOfParcels.getTotalElements());
-			model.addAttribute("totalPages", pageOfParcels.getTotalPages());
-			model.addAttribute("pageSize", size);
-		} catch (Exception e) {
-			model.addAttribute("message", e.getMessage());
-		}
-	}
-
-	@GetMapping("/sentBy")
-	public String getParcelsSentByMe(Model model, @RequestParam(defaultValue = "1") int page,
-			@RequestParam(defaultValue = "5") int size) {
-		loadModelWithWantedPagedParcels(model, true, page, size);
-		return "/parcels/parcels-list";
-	}
-
-	@GetMapping("/sentTo")
-	public String getParcelsSentToMe(Model model, @RequestParam(defaultValue = "1") int page,
-			@RequestParam(defaultValue = "5") int size) {
-		loadModelWithWantedPagedParcels(model, false, page, size);
-		return "/parcels/parcels-list";
 	}
 
 	@GetMapping("/create")
