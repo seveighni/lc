@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,8 +28,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.lc.application.dto.CreateParcelDto;
-import com.lc.application.dto.ParcelDto;
 import com.lc.application.dto.ResultDto;
+import com.lc.application.dto.SearchParcelDto;
 import com.lc.application.dto.UpdateParcelDto;
 import com.lc.application.model.Customer;
 import com.lc.application.model.DeliveryStatus;
@@ -66,10 +65,8 @@ public class ParcelController {
 	private OfficeRepository officeRepository;
 
 	@GetMapping
-	public String getParcels(Model model, @RequestParam(required = false) String email,
-			@RequestParam(required = false) String searchBy, @RequestParam(required = false) String startDate,
-			@RequestParam(required = false) String endDate, @RequestParam(defaultValue = "1") int page,
-			@RequestParam(defaultValue = "5") int size) {
+	public String getParcels(Model model, @Valid @ModelAttribute("parcelDto") SearchParcelDto parcelDto,
+			@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "5") int size) {
 
 		try {
 			List<Parcel> parcels = new ArrayList<Parcel>();
@@ -112,21 +109,19 @@ public class ParcelController {
 
 			// check dates
 			/*
-			model.addAttribute("startDate", startDate);
-			model.addAttribute("endDate", endDate);
-			if (startDate.isEmpty() || endDate.isEmpty()) {
-				model.addAttribute("result", new ResultDto("Dates entered are not valid.", false));
-				return "/parcels/parcels-list";
-			}
-			Date start = retirieveDate(startDate);
-			Date end = retirieveDate(endDate);
-			if (start.after(end)) {
-				model.addAttribute("result", new ResultDto("Start date should be before end date.", false));
-				return "/parcels/parcels-list";
-			}*/
+			 * model.addAttribute("startDate", startDate); model.addAttribute("endDate",
+			 * endDate); if (startDate.isEmpty() || endDate.isEmpty()) {
+			 * model.addAttribute("result", new ResultDto("Dates entered are not valid.",
+			 * false)); return "/parcels/parcels-list"; } Date start =
+			 * retirieveDate(startDate); Date end = retirieveDate(endDate); if
+			 * (start.after(end)) { model.addAttribute("result", new
+			 * ResultDto("Start date should be before end date.", false)); return
+			 * "/parcels/parcels-list"; }
+			 */
 
 			parcels = pageParcels.getContent();
 
+			model.addAttribute("parcelDto", parcelDto);
 			model.addAttribute("parcels", parcels);
 			model.addAttribute("currentPage", pageParcels.getNumber() + 1);
 			model.addAttribute("totalItems", pageParcels.getTotalElements());
@@ -158,14 +153,14 @@ public class ParcelController {
 		return date;
 	}
 
-	// TODO
+	// TODO - remove
 	private void loadModelWithWantedPagedParcels(Model model, Boolean sentByMe, int page, int size) {
 		try {
 			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 			User principal = (User) auth.getPrincipal();
 			String userRoleType = auth.getAuthorities().stream().findFirst().get().toString();
 
-			List<ParcelDto> parcels = new ArrayList<ParcelDto>();
+			List<SearchParcelDto> parcels = new ArrayList<SearchParcelDto>();
 			var paging = PageRequest.of(page - 1, size, Sort.by("id"));
 			Page<Parcel> pageOfParcels = null;
 
@@ -176,18 +171,10 @@ public class ParcelController {
 					Long userId = customer.get().getId();
 					if (sentByMe) {
 						pageOfParcels = parcelRepository.findAllBySenderId(paging, userId);
-						parcels = pageOfParcels.getContent().stream().map(p -> new ParcelDto(p))
-								.collect(Collectors.toList());
 
-						// TODO remove hardcoded entity
-						parcels.add(new ParcelDto(1));
 					} else {
 						pageOfParcels = parcelRepository.findAllByReceiverId(paging, userId);
-						parcels = pageOfParcels.getContent().stream().map(p -> new ParcelDto(p))
-								.collect(Collectors.toList());
 
-						// TODO remove hardcoded entity
-						parcels.add(new ParcelDto(2));
 					}
 				}
 			} else if (userRoleType.equals("EMPLOYEE")) {
@@ -196,26 +183,14 @@ public class ParcelController {
 					if (employee.isPresent()) {
 						Long userId = employee.get().getId();
 						pageOfParcels = parcelRepository.findAllByRegisteredById(paging, userId);
-						parcels = pageOfParcels.getContent().stream().map(p -> new ParcelDto(p))
-								.collect(Collectors.toList());
-
-						// TODO remove hardcoded entity
-						parcels.add(new ParcelDto(3));
 					}
 				} else {
 					pageOfParcels = parcelRepository.findAll(paging);
-					parcels = pageOfParcels.getContent().stream().map(p -> new ParcelDto(p))
-							.collect(Collectors.toList());
 
-					// TODO remove hardcoded entity
-					parcels.add(new ParcelDto(4));
 				}
 			} else if (userRoleType.equals("ADMIN")) {
 				pageOfParcels = parcelRepository.findAll(paging);
-				parcels = pageOfParcels.getContent().stream().map(p -> new ParcelDto(p)).collect(Collectors.toList());
 
-				// TODO remove hardcoded entity
-				parcels.add(new ParcelDto(5));
 			}
 			model.addAttribute("parcels", parcels);
 			model.addAttribute("currentPage", pageOfParcels.getNumber() + 1);
@@ -346,7 +321,6 @@ public class ParcelController {
 		model.addAttribute("result", new ResultDto("Parcel created successfully!", true));
 		return "/parcels/create";
 	}
-
 
 	@GetMapping("/{id}")
 	public String getParcel(Model model, @PathVariable Long id) {
