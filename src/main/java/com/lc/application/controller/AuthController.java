@@ -102,8 +102,6 @@ public class AuthController {
 			if (role == null) {
 				role = new Role();
 				role.setName("CUSTOMER");
-				// TODO check
-				// user.addRole(role);
 				roleRepository.save(role);
 			}
 			user.addRole(role);

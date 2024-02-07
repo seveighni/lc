@@ -29,7 +29,7 @@ public class SecConfiguration {
                         .requestMatchers("/profile").authenticated()
                         .requestMatchers(HttpMethod.GET, "/offices").hasAnyAuthority("ADMIN", "EMPLOYEE", "CUSTOMER")
                         .requestMatchers("/offices").hasAnyAuthority("ADMIN", "EMPLOYEE")
-                        .requestMatchers("/offices/**").hasAnyAuthority("ADMIN", "EMPLOYEE") // TODO fix this
+                        .requestMatchers("/offices/**").hasAnyAuthority("ADMIN", "EMPLOYEE")
                         .requestMatchers("/users/**").hasAuthority("ADMIN")
                         .requestMatchers("/employees/**").hasAuthority("ADMIN")
                         .requestMatchers("/rates/**").hasAnyAuthority("ADMIN", "EMPLOYEE")

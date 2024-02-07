@@ -36,7 +36,6 @@ import com.lc.application.dto.SearchParcelDto;
 import com.lc.application.dto.UpdateParcelDto;
 import com.lc.application.model.Customer;
 import com.lc.application.model.DeliveryStatus;
-import com.lc.application.model.Employee;
 import com.lc.application.model.Parcel;
 import com.lc.application.repository.CustomerRepository;
 import com.lc.application.repository.EmployeeRepository;
@@ -77,15 +76,12 @@ public class ParcelController {
 			var paging = PageRequest.of(page - 1, size, Sort.by("id"));
 			Page<Parcel> pageParcels = null;
 
-			var startDate = parcelDto.getStartDate() == null
-					? LocalDate.of(1970, 1, 1).atTime(LocalTime.MIN)
+			var startDate = parcelDto.getStartDate() == null ? LocalDate.of(1970, 1, 1).atTime(LocalTime.MIN)
 					: parcelDto.getStartDate().atTime(LocalTime.MIN);
 			var endDate = parcelDto.getEndDate() == null ? LocalDateTime.now()
 					: parcelDto.getEndDate().atTime(LocalTime.MAX);
 
-			var specInRange = ParcelSpecification.orderDateInRange(
-					startDate,
-					endDate);
+			var specInRange = ParcelSpecification.orderDateInRange(startDate, endDate);
 
 			com.lc.application.model.User loggedInUser = getLoggedInUser();
 			if (getLoggedInUserRole().equals("CUSTOMER")) {

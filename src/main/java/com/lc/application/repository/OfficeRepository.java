@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.lc.application.model.Office;
 
 public interface OfficeRepository extends JpaRepository<Office, Long> {
-    Page<Office> findByAddressContainingIgnoreCase(String keyword, Pageable pageable);
-    
-    Office findByAddress(String keyword);
+	Page<Office> findByAddressContainingIgnoreCase(String keyword, Pageable pageable);
+
+	Office findByAddress(String keyword);
 }
