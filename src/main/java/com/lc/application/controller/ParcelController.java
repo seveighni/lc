@@ -216,13 +216,6 @@ public class ParcelController {
 		return "/parcels/parcels-list";
 	}
 
-	@GetMapping("/registeredBy")
-	public String getParcelsRegisteredByMe(Model model, @RequestParam(defaultValue = "1") int page,
-			@RequestParam(defaultValue = "5") int size) {
-		loadModelWithWantedPagedParcels(model, true, page, size);
-		return "/parcels/parcels-list";
-	}
-
 	@GetMapping("/create")
 	public String getParcelsCreateForm(Model model) {
 		var dto = new CreateParcelDto();
