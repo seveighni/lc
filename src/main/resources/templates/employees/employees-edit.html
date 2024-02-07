@@ -27,7 +27,7 @@
 
             &nbsp;
             <div class="mb-3">
-              <label class="form-label">Office address:</label> 
+              <label class="form-label">Office address</label> 
               <select class="form-control" id="dropDownList" th:field="*{officeId}">
                 <option th:value=null>Please select...</option>
                 <option th:each="office : ${offices}" th:value="${office.id}" th:text="${office.address}"></option>
@@ -36,7 +36,7 @@
             </div>
 
             <div class="mb-3">
-              <label class="form-label">Type:</label> 
+              <label class="form-label">Type</label> 
               <select class="form-control" id="type" name="type" th:field="*{type}" placeholder="Type">
                 <option value="Office">Office worker</option>
                 <option value="Delivery">Delivery worker</option>

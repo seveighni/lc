@@ -23,8 +23,8 @@
                 <div class="search d-flex w-100">
                     <input id="email" type="search" name="email" th:value="${email}" class="form-control me-2"
                         placeholder="Filter by email">
-                    <label class="input-group-text me-2" for="pageSize">Items per page:</label>
-                    <select form="searchForm" name="size" th:value="${pageSize}" class=" size-select me-2"
+                    <label class="input-group-text me-2" for="pageSize">Items per page</label>
+                    <select form="searchForm" name="size" th:value="${pageSize}" class="size-select me-2"
                         id="pageSize">
                         <option th:each="s : ${ {5, 10, 20} }" th:value="${s}" th:text="${s}"
                             th:selected="${s == pageSize}"></option>

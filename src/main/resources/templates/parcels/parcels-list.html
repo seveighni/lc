@@ -20,13 +20,13 @@
         <div class="container justify-content-center p-5">
             <form class="d-flex w-100 mt-3" th:action="@{/parcels}" id="searchForm">
                 <div class="search d-flex w-100">
-                    <label class="input-group-text me-2" for="startDate">Start date:</label>
+                    <label class="input-group-text me-2" for="startDate">Start date</label>
                     <input type="date" class="form-control me-2" id="startDate" th:name="startDate"
                         th:value="${startDate}" placeholder="startDate">
-                    <label class="input-group-text me-2" for="endDate">End date:</label>
+                    <label class="input-group-text me-2" for="endDate">End date</label>
                     <input type="date" class="form-control me-2" id="endDate" th:name="endDate" th:value="${endDate}"
                         placeholder="endDate">
-                    <label class="input-group-text me-2" for="searchBy">Search by:</label>
+                    <label class="input-group-text me-2" for="searchBy">Search by</label>
                     <select form="searchForm" name="searchBy" th:value="${searchBy}" class="size-select me-2"
                         id="searchBy">
                         <option th:each="opt : ${ { 'sender' , 'reciever', 'registerer', 'sent but not recieved'} }"
@@ -34,7 +34,7 @@
                     </select>
                     <input id="email" type="search" name="email" th:value="${email}" class="form-control me-2"
                         placeholder="Filter by email">
-                    <label class="input-group-text me-2" for="pageSize">Items per page:</label>
+                    <label class="input-group-text me-2" for="pageSize">Items per page</label>
                     <select form="searchForm" name="size" th:value="${pageSize}" class="size-select me-2" id="pageSize">
                         <option th:each="s : ${ {5, 10, 20} }" th:value="${s}" th:text="${s}"
                             th:selected="${s == pageSize}"></option>

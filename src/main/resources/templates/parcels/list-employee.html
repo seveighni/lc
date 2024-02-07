@@ -20,7 +20,7 @@
         <div class="container justify-content-center p-5">
             <form class="row g-3 mt-3" th:action="@{/parcels}" id="searchForm">
 
-                <div class="col-md-4">
+                <div sec:authorize="hasAnyAuthority('ADMIN','EMPLOYEE')" class="col-md-4">
                     <div class="container">
                         <div class="row">
                             <label class="input-group-text col-4" for="responsible">Responsible</label>
@@ -30,9 +30,9 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
-                <div class="col-md-4">
+
+                <div sec:authorize="hasAnyAuthority('ADMIN','EMPLOYEE')" class="col-md-4">
                     <div class="container">
                         <div class="row">
                             <label class="input-group-text col-4" for="sender">Sender</label>
@@ -44,7 +44,7 @@
                     </div>
 
                 </div>
-                <div class="col-md-4">
+                <div sec:authorize="hasAnyAuthority('ADMIN','EMPLOYEE')" class="col-md-4">
                     <div class="container">
                         <div class="row">
                             <label class="input-group-text col-4" for="receiver">Receiver</label>
@@ -54,7 +54,6 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
 
                 <div class="col-md-3">
@@ -98,15 +97,17 @@
                         <div class="row">
                             <label class="input-group-text col-6">Paid</label>
                             <div class="col-6 ps-2 pe-0 d-flex align-items-center">
-                                <input class="form-check-input mt-0" type="checkbox" th:name="isPaid" th:value="${isPaid}">
+                                <input class="form-check-input mt-0" type="checkbox" th:name="isPaid"
+                                    th:value="${isPaid}">
                             </div>
                         </div>
                     </div>
                 </div>
-               
+
                 <div class="col-12">
                     <div class="container">
                         <div class="row">
+                            <div class="col-9"></div>
                             <label class="input-group-text col-auto" for="pageSize">Items per page</label>
                             <div class="col-auto ps-0 pe-2">
                                 <select form="searchForm" name="size" th:value="${pageSize}" class="form-control size-select me-2"
@@ -129,7 +130,8 @@
                         <tr>
                             <th scope="col">#</th>
                             <th scope="col">Order date</th>
-                            <th scope="col">Responsible employee</th>
+                            <th scope="col" sec:authorize="hasAnyAuthority('ADMIN','EMPLOYEE')">Responsible employee
+                            </th>
                             <th scope="col">Sender</th>
                             <th scope="col">Receiver</th>
                             <th scope="col">Address</th>
@@ -137,14 +139,14 @@
                             <th scope="col">Paid</th>
                             <th scope="col">Status</th>
                             <th scope="col">Status updated at</th>
-                            <th scope="col">Actions</th>
+                            <th scope="col" sec:authorize="hasAnyAuthority('ADMIN','EMPLOYEE')">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr th:each="parcel : ${parcels}">
                             <td th:text="${parcel.id}"></td>
                             <td th:text="${#temporals.format(parcel.orderDate, 'yyyy-MM-dd HH:mm')}"></td>
-                            <td
+                            <td sec:authorize="hasAnyAuthority('ADMIN','EMPLOYEE')"
                                 th:text="${parcel.registeredBy.user.firstName + ' ' + parcel.registeredBy.user.lastName}">
                             </td>
                             <td th:text="${parcel.sender.user.firstName + ' ' + parcel.sender.user.lastName}"></td>
@@ -158,7 +160,7 @@
                             </td>
                             <td th:text="${parcel.status}"></td>
                             <td th:text="${#temporals.format(parcel.statusLastUpdateDate, 'yyyy-MM-dd HH:mm')}"></td>
-                            <td>
+                            <td sec:authorize="hasAnyAuthority('ADMIN','EMPLOYEE')">
                                 <a th:href="@{/parcels/{id}(id=${parcel.id})}" title="Edit"
                                     class="fa-regular fa-pen-to-square icon-dark"></a>
                             </td>
@@ -173,8 +175,11 @@
 
             <div class="container">
                 <div class="row">
-                    <div class="col-2" th:text="${'Total paid: ' + totalPaid}"></div>
-                    <div class="col-3" th:text="${'Total unpaid: ' + remainingPayment}"></div>
+                    <div sec:authorize="hasAnyAuthority('ADMIN','EMPLOYEE')" class="col-2"
+                        th:text="${'Total paid: ' + totalPaid}"></div>
+                    <div sec:authorize="hasAnyAuthority('ADMIN','EMPLOYEE')" class="col-3"
+                        th:text="${'Total unpaid: ' + remainingPayment}"></div>
+                    <div sec:authorize="hasAnyAuthority('CUSTOMER')" class="col-5"></div>
                     <nav class="col-7" aria-label="Pagination" th:if="${totalPages > 0}">
                         <ul class="pagination justify-content-end">
                             <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
