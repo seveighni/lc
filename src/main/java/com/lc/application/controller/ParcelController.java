@@ -4,7 +4,9 @@ import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
@@ -41,6 +44,7 @@ import com.lc.application.repository.OfficeRepository;
 import com.lc.application.repository.ParcelRepository;
 import com.lc.application.repository.RatesRepository;
 import com.lc.application.repository.UserRepository;
+import com.lc.application.specification.ParcelSpecification;
 
 import jakarta.validation.Valid;
 
@@ -73,18 +77,28 @@ public class ParcelController {
 			var paging = PageRequest.of(page - 1, size, Sort.by("id"));
 			Page<Parcel> pageParcels = null;
 
+			var startDate = parcelDto.getStartDate() == null
+					? LocalDate.of(1970, 1, 1).atTime(LocalTime.MIN)
+					: parcelDto.getStartDate().atTime(LocalTime.MIN);
+			var endDate = parcelDto.getEndDate() == null ? LocalDateTime.now() : parcelDto.getEndDate().atTime(LocalTime.MAX);
+
+			var specInRange = ParcelSpecification.orderDateInRange(
+					startDate,
+					endDate);
+
 			com.lc.application.model.User loggedInUser = getLoggedInUser();
-			if (getLoggedInUserRole().contains("CUSTOMER")) {
+			if (getLoggedInUserRole().equals("CUSTOMER")) {
 				Optional<Customer> customer = customerRepository.getCustomerIdByUserEmail(loggedInUser.getEmail());
 				if (customer.isPresent()) {
 					Long customerId = customer.get().getId();
-					pageParcels = parcelRepository.findAllByReceiverIdOrSenderId(paging, customerId, customerId);
+					var relatedToMe = Specification.where(ParcelSpecification.hasSenderId(customerId))
+							.or(ParcelSpecification.hasReceiverId(customerId));
+					pageParcels = parcelRepository.findAll(specInRange.and(relatedToMe), paging);
 				} else {
 					model.addAttribute("result", new ResultDto("Customer not found!", false));
 				}
 			} else if (getLoggedInUserRole().equals("EMPLOYEE")) {
-				// List<Parcel> parcels1 = new ArrayList<Parcel>();
-				pageParcels = parcelRepository.findAll(paging);
+				pageParcels = parcelRepository.findAll(specInRange, paging);
 
 				var all = parcelRepository.findAll();
 				var totalPaid = all.stream().filter(p -> p.getIsPaid()).map(p -> p.getPrice()).reduce(BigDecimal.ZERO,
@@ -102,9 +116,7 @@ public class ParcelController {
 				return "/parcels/list-employee";
 			} else if (getLoggedInUserRole().equals("ADMIN")) {
 
-				//
-
-				pageParcels = parcelRepository.findAll(paging);
+				pageParcels = parcelRepository.findAll(specInRange, paging);
 			}
 
 			// check dates
@@ -263,7 +275,8 @@ public class ParcelController {
 		}
 
 		if (dto.getOfficeId() != null && dto.getAddress() != null && !dto.getAddress().isBlank()) {
-			model.addAttribute("result", new ResultDto("Office and address cannot be provided at the same time.", false));
+			model.addAttribute("result",
+					new ResultDto("Office and address cannot be provided at the same time.", false));
 			return "/parcels/create";
 		}
 
