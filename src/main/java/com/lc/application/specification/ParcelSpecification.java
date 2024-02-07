@@ -24,4 +24,22 @@ public class ParcelSpecification {
             return cb.equal(root.get("receiver").get("id"), receiverId);
         };
     }
+
+    public static Specification<Parcel> hasEmployeeResponsible(String email) {
+        return (root, query, cb) -> {
+            return cb.equal(root.get("registeredBy").get("user").get("email"), email);
+        };
+    }
+
+    public static Specification<Parcel> hasSender(String email) {
+        return (root, query, cb) -> {
+            return cb.equal(root.get("sender").get("user").get("email"), email);
+        };
+    }
+
+    public static Specification<Parcel> hasReceiver(String email) {
+        return (root, query, cb) -> {
+            return cb.equal(root.get("receiver").get("user").get("email"), email);
+        };
+    }
 }

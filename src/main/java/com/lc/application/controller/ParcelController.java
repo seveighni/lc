@@ -80,7 +80,8 @@ public class ParcelController {
 			var startDate = parcelDto.getStartDate() == null
 					? LocalDate.of(1970, 1, 1).atTime(LocalTime.MIN)
 					: parcelDto.getStartDate().atTime(LocalTime.MIN);
-			var endDate = parcelDto.getEndDate() == null ? LocalDateTime.now() : parcelDto.getEndDate().atTime(LocalTime.MAX);
+			var endDate = parcelDto.getEndDate() == null ? LocalDateTime.now()
+					: parcelDto.getEndDate().atTime(LocalTime.MAX);
 
 			var specInRange = ParcelSpecification.orderDateInRange(
 					startDate,
@@ -93,12 +94,23 @@ public class ParcelController {
 					Long customerId = customer.get().getId();
 					var relatedToMe = Specification.where(ParcelSpecification.hasSenderId(customerId))
 							.or(ParcelSpecification.hasReceiverId(customerId));
-					pageParcels = parcelRepository.findAll(specInRange.and(relatedToMe), paging);
+					var filter = specInRange.and(relatedToMe);
+					pageParcels = parcelRepository.findAll(filter, paging);
 				} else {
 					model.addAttribute("result", new ResultDto("Customer not found!", false));
 				}
 			} else if (getLoggedInUserRole().equals("EMPLOYEE")) {
-				pageParcels = parcelRepository.findAll(specInRange, paging);
+				var filter = specInRange;
+				if (parcelDto.getResponsible() != null && !parcelDto.getResponsible().isBlank()) {
+					filter = filter.and(ParcelSpecification.hasEmployeeResponsible(parcelDto.getResponsible()));
+				}
+				if (parcelDto.getSender() != null && !parcelDto.getSender().isBlank()) {
+						filter = filter.and(ParcelSpecification.hasSender(parcelDto.getSender()));
+				}
+				if (parcelDto.getReceiver() != null && !parcelDto.getReceiver().isBlank()) {
+						filter = filter.and(ParcelSpecification.hasReceiver(parcelDto.getReceiver()));
+				}
+				pageParcels = parcelRepository.findAll(filter, paging);
 
 				var all = parcelRepository.findAll();
 				var totalPaid = all.stream().filter(p -> p.getIsPaid()).map(p -> p.getPrice()).reduce(BigDecimal.ZERO,
@@ -115,8 +127,17 @@ public class ParcelController {
 				model.addAttribute("remainingPayment", remainingPayment);
 				return "/parcels/list-employee";
 			} else if (getLoggedInUserRole().equals("ADMIN")) {
-
-				pageParcels = parcelRepository.findAll(specInRange, paging);
+				var filter = specInRange;
+				if (parcelDto.getResponsible() != null && !parcelDto.getResponsible().isBlank()) {
+					filter = filter.and(ParcelSpecification.hasEmployeeResponsible(parcelDto.getResponsible()));
+				}
+				if (parcelDto.getSender() != null && !parcelDto.getSender().isBlank()) {
+						filter = filter.and(ParcelSpecification.hasSender(parcelDto.getSender()));
+				}
+				if (parcelDto.getReceiver() != null && !parcelDto.getReceiver().isBlank()) {
+						filter = filter.and(ParcelSpecification.hasReceiver(parcelDto.getReceiver()));
+				}
+				pageParcels = parcelRepository.findAll(filter, paging);
 			}
 
 			// check dates
