@@ -262,6 +262,11 @@ public class ParcelController {
 			return "/parcels/create";
 		}
 
+		if (dto.getOfficeId() != null && dto.getAddress() != null && !dto.getAddress().isBlank()) {
+			model.addAttribute("result", new ResultDto("Office and address cannot be provided at the same time.", false));
+			return "/parcels/create";
+		}
+
 		var from = customerRepository.getCustomerIdByUserEmail(dto.getFrom());
 		if (!from.isPresent()) {
 			model.addAttribute("result", new ResultDto("Sender not found.", false));
