@@ -95,6 +95,13 @@ public class ParcelController {
 					var relatedToMe = Specification.where(ParcelSpecification.hasSenderId(customerId))
 							.or(ParcelSpecification.hasReceiverId(customerId));
 					var filter = specInRange.and(relatedToMe);
+					if (parcelDto.getIsPaid() != null) {
+						filter = filter.and(ParcelSpecification.isPaid(parcelDto.getIsPaid()));
+					}
+
+					if (parcelDto.getStatus() != null) {
+						filter = filter.and(ParcelSpecification.hasStatus(parcelDto.getStatus()));
+					}
 					pageParcels = parcelRepository.findAll(filter, paging);
 				} else {
 					model.addAttribute("result", new ResultDto("Customer not found!", false));
@@ -121,7 +128,7 @@ public class ParcelController {
 
 				pageParcels = parcelRepository.findAll(filter, paging);
 
-				var all = parcelRepository.findAll();
+				var all = parcelRepository.findAll(filter);
 				var totalPaid = all.stream().filter(p -> p.getIsPaid()).map(p -> p.getPrice()).reduce(BigDecimal.ZERO,
 						BigDecimal::add);
 				var remainingPayment = all.stream().filter(p -> !p.getIsPaid()).map(p -> p.getPrice())
