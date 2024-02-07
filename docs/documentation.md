@@ -1,8 +1,13 @@
 # Logistics Company website
 
+Direct links:
+- [Pages on the website](#pages) </br>
+- [Permissions to view pages](#permissions-to-view-pages) </br>
+- [Website capabilities with examples](#website-capabilities) </br>
 
+---
 
-## User interface
+## Pages
 
 ### Navigation bar
 
@@ -149,6 +154,8 @@ The input fields for creating a new parcel are:
 
 By clicking the 'Create' button on the bottom right corner you will create a new parcel order.
 
+---
+
 ## Permissions to view pages
 
 Unauthenticated users have permissions to only view Login and Register pages.
@@ -199,6 +206,7 @@ Employees and Administartors can access this page and view, filter through parce
 
 Only Employees have permission to create new parcel entries.
 
+---
 
 ## Website capabilities
 
