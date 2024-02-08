@@ -152,6 +152,13 @@ The input fields for creating a new parcel are:
 - Rate: Choose one of the availabe rates from the drop-down menu.
 - Is paid: Check the box if the parcel order has been pre-paid or leave it unchecked if the parcel order will be paid for on delivery.
 
+
+The price for the parcel is calculated by multiplying the weight of the parcel with the price per Kg from the selected rate and adding the flat rate price of the selected rate to the result of the multiplication.
+
+    <parcel-price> = <parcel-weight> * <rate-price-per-kg> + <rate-flat-price>
+
+You can either chose to deliver to a selected office or a specific address, if enetered.
+
 By clicking the 'Create' button on the bottom right corner you will create a new parcel order.
 
 ---
