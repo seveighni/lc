@@ -55,7 +55,7 @@ public class RatesController {
 	@PostMapping
 	public String createRate(@Valid @ModelAttribute("rate") Rates rate, BindingResult result, Model model) {
 		try {
-			if (result.hasErrors() || rate.getName().isEmpty()) {
+			if (result.hasErrors() || rate.getName().isBlank()) {
 				model.addAttribute("rate", rate);
 				model.addAttribute("rates", ratesRepository.findAll());
 				return "redirect:/rates";
